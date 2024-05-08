@@ -12,12 +12,12 @@ class Transformacje:
             flat - spłaszczenie
             ecc2 - mimośród^2
         + WGS84: https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84
-        + Inne powierzchnie odniesienia: https://en.wikibooks.org/wiki/PROJ.4#Spheroid
-        + Parametry planet: https://nssdc.gsfc.nasa.gov/planetary/factsheet/index.html
+        + Inne powierzchnie odniesienia: 
+        + Parametry planet: 
         """
         if model == "wgs84":
-            self.a = 6378137.0 # semimajor_axis
-            self.b = 6356752.31424518 # semiminor_axis
+            self.a = 6378137.0
+            self.b = 6356752.31424518 
         elif model == "grs80":
             self.a = 6378137.0
             self.b = 6356752.31414036
@@ -27,8 +27,30 @@ class Transformacje:
         else:
             raise NotImplementedError(f"{model} model not implemented")
         self.flat = (self.a - self.b) / self.a
-        self.ecc = sqrt(2 * self.flat - self.flat ** 2) # eccentricity  WGS84:0.0818191910428 
-        self.ecc2 = (2 * self.flat - self.flat ** 2) # eccentricity
+        self.ee = (2 * self.flat - self.flat ** 2)
+        
+        
+        def xyz2bhl(self, X, Y, Z,):
+            """" Funkcja zmienia współrządne ortokartezjańskie na współrzędne geodezyjne"""
+            p = np.sqrt(X**2 + Y**2)
+            f = np.arctan(Z/(p * (1 -self.ee)))
+            while True: 
+                N = Np(self,f)
+                h = (p/np.cos(f)) - N
+                fs = f
+                f = np.arctan(Z/(p *(1 - (self.ee * (N/(N + h )))))) 
+                if np.abs(fs-f) < (0.000001/206265):
+                    break
+            l = np.arctan2(Y, X)
+            return(f,l,h)
+        
+        def Np(self, f): 
+            N = a/np.sqrt(1 - ee * np.sin(f)**2)
+            return(N)
+            
+    
+        
+        
         
         
         
