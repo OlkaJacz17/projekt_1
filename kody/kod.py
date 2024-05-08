@@ -31,7 +31,19 @@ class Transformacje:
         self.flat = (self.a - self.b) / self.a
         self.ee = (2 * self.flat - self.flat ** 2)
         
-    def Np(self, f): 
+    def Np(self, f):
+        """ Funkcja oblicza promień krzywiznowy 
+        Parameters 
+        ----------
+        f : FLOAT
+                szerokosć geograficzna [radiany]
+        
+        Returns
+        -------
+        N : FLOAT
+                promien krzywiznowy [metry]
+        """
+        
         N = self.a/np.sqrt(1 - self.ee * np.sin(f)**2)
         return(N)
         
@@ -52,9 +64,7 @@ class Transformacje:
                 [stopnie dziesiętne] - długośc geodezyjna.
             h : TYPE
                 [metry] - wysokość elipsoidalna
-            output [STR] - optional, defoulf 
-                dec_degree - decimal degree
-                dms - degree, minutes, sec"""
+            """
             p = np.sqrt(X**2 + Y**2)
             f = np.arctan(Z/(p * (1 -self.ee)))
             while True: 
@@ -69,7 +79,22 @@ class Transformacje:
   
         
     def flhXYZ(self, f, l, h):
-            """ Funkcja zmienia współrzędne geodezyjne na ortokartezjańskie"""
+            """ Funkcja zajmuje się transformacją współrzędnych geodezyjnych (fi, lambda, h) 
+            na współrzędne ortokartezjańskie (X,Y,Z)
+            Parameters 
+            ----------
+            f, l, h : FLOAT
+                        współrzędne geodezyjne
+                    f - [radiany] - szerokość geodezyjna
+                    l - [radiany] - długość geodezyjna
+                    h - [metry] - wysokość elipsoidalna,
+                    
+            Returns
+            -------
+            X, Y, Z - współrzędne w układzie ortokartezjańskim, 
+                        : FLOAT
+            """
+            
             N = self.Np(self, f)
             X = (N + h) * np.cos(f) * np.cos(l)
             Y = (N + h) * np.cos(f) * np.sin(l)
@@ -77,19 +102,45 @@ class Transformacje:
             return(X, Y, Z)
         
     def macierzR(self,f,l):
-             R = np.array([[-np.sin(f)*np.cos(l), -np.sin(l), np.cos(f)*np.cos(l)],
+        """ Funkcja tworzy macierz R potrzebną do transformacji współrzędnych ortokartezjańskich  (X, Y, Z) do 
+        współrzędnych układu NEU.
+        Parameters
+        ----------
+        f, l : FLOAT
+        parametry to szerokość i długość geodezyjna [radiany]
+        
+        Returns
+        -------
+        R : FLOAT
+                R jest macierzą dwuwymiarową,
+        """
+        
+        R = np.array([[-np.sin(f)*np.cos(l), -np.sin(l), np.cos(f)*np.cos(l)],
                            [-np.sin(f)*np.sin(l), np.cos(l), np.cos(f)*np.sin(l)],
                            [np.cos(f),          0,     np.sin(f)]])
-             return(R)
+        return(R)
         
     def XYZ2neu(self, X, Y, Z, x0, y0, z0):
-            f, l, h = self.xyz2bhl
-            dX = array[X-x0,
-                       Y-y0,
-                       Z-z0]
-            R = self.macierzR(f, l)
-            dx= R.T @ dX
-            return(dx)
+        """ Funcja transformuje współrzędne ortokartezjańskie (X,Y,Z) do układu NEU (North, East,Up ), wykorzystując 
+        do tego celu macierz R
+        Parameters 
+        ----------
+        X, Y, Z : FLOAT
+                    współrzędne ortokartezjańskie punktów
+        x0, y0, z0 : FLOAT
+                        współrzędne ostokartezjańskie punktu odniesienia
+        
+        Returns
+        -------
+        dx - wektor współrzędnych przekształconych do układu NEU
+        """
+        f, l, h = self.xyz2bhl
+        dX = array[X-x0,
+                   Y-y0,
+                   Z-z0]
+        R = self.macierzR(f, l)
+        dx= R.T @ dX
+        return(dx)
     
     def ustal_parametry(self, l):
         if l >= 13.5 and l < 16.5:
