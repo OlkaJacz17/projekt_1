@@ -343,8 +343,7 @@ except IndexError:
 except ValueError:
     print('Zły format danych w pliku.')
 finally:
-    print('Koniec programu')
-
+    print('Koniec programu')  
         
         
         
