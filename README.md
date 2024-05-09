@@ -46,11 +46,11 @@ _____Transformacja analogiczna do powyższej, wprowadzając współrzędne geode
 
 
  
-#__WYMAGANIA PROGRAMU__
+# WYMAGANIA PROGRAMU
 
 Do poprawnego działania programu należy skorzystać z pythona w wersji 3.6 lub nowszych a także zainstalowaną bibliotekę numpy oraz sys. Program został napisany dla systemu operacyjnego Windows, macOS, Linux.
 
-# __KORZYSTANIE Z PROGRAMU__
+# KORZYSTANIE Z PROGRAMU
 
 _Dane wejściowe_ - dane wprowadzane do programu powinny mieć format pliku .txt 
 
