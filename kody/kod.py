@@ -391,7 +391,7 @@ X, Y, Z = wczytaj_plik_wspolrzednych(nazwa_pliku)
 # except ValueError:
 #     print('Zły format danych w pliku.')
 # finally:
-#     print('Koniec programu')    
+#     print('Koniec programu')
   
 
 
