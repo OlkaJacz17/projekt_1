@@ -47,46 +47,35 @@ class Transformacje:
         N = self.a/np.sqrt(1 - self.ee * np.sin(f)**2)
         return(N)
         
-    def xyz2plh(self, X, Y, Z):
-            """" Algorytm Hirvonena - algorytm transformacji współrzędnych ortokartezjańskich (x, y, z)
-            na współrzędne geodezyjne długość szerokość i wysokośc elipsoidalna (phi, lam, h). Jest to proces iteracyjny. 
-            W wyniku 3-4-krotneej iteracji wyznaczenia wsp. phi można przeliczyć współrzędne z dokładnoscią ok 1 cm.     
-            Parameters
-            ----------
-            X, Y, Z : FLOAT
-                 współrzędne w układzie orto-kartezjańskim, 
-
-            Returns
-            -------
-            lat
-                [stopnie dziesiętne] - szerokość geodezyjna
-            lon
-                [stopnie dziesiętne] - długośc geodezyjna.
-            h : TYPE
-                [metry] - wysokość elipsoidalna
-            """
-            p = np.sqrt(X**2 + Y**2)
-            f = np.arctan(Z/(p * (1 -self.ee)))
-            while True: 
-                N = self.Np(f)
-                h = (p/np.cos(f)) - N
-                fs = f
-                f = np.arctan(Z/(p *(1 - (self.ee * (N/(N + h )))))) 
-                if np.abs(fs-f) < (0.000001/206265):
-                    break
-            l = np.arctan2(Y, X)
-            return(f,l,h)
-    
+  
     def xyz2plh(self, X_list, Y_list, Z_list):
-     f = []
-     l = []
-     h = []
+        """" Algorytm Hirvonena - algorytm transformacji współrzędnych ortokartezjańskich (x, y, z)
+        na współrzędne geodezyjne długość szerokość i wysokośc elipsoidalna (phi, lam, h). Jest to proces iteracyjny. 
+        W wyniku 3-4-krotneej iteracji wyznaczenia wsp. phi można przeliczyć współrzędne z dokładnoscią ok 1 cm.     
+        Parameters
+        ----------
+        X, Y, Z : FLOAT
+             współrzędne w układzie orto-kartezjańskim, 
 
-     for X, Y, Z in zip(X_list, Y_list, Z_list):
-         p = np.sqrt(X**2 + Y**2)
-         f = np.arctan(Z / (p * (1 - self.ee)))
+        Returns
+        -------
+        lat
+            [stopnie dziesiętne] - szerokość geodezyjna
+        lon
+            [stopnie dziesiętne] - długośc geodezyjna.
+        h : TYPE
+            [metry] - wysokość elipsoidalna
+        """
+        
+        f = []
+        l = []
+        h = []
+
+        for X, Y, Z in zip(X_list, Y_list, Z_list):
+            p = np.sqrt(X**2 + Y**2)
+            f = np.arctan(Z / (p * (1 - self.ee)))
          
-         while True: 
+        while True: 
              N = self.Np(f)
              h = (p / np.cos(f)) - N
              fs = f
@@ -95,38 +84,32 @@ class Transformacje:
              if np.abs(fs - f) < (0.000001 / 206265):
                  break
                  
-         l = np.arctan2(Y, X)
-         f.append(f)
-         l.append(l)
-         h.append(h)
+             l = np.arctan2(Y, X)
+             f.append(f)
+             l.append(l)
+             h.append(h)
 
-     return f,l,h 
+        return f,l,h 
   
         
-    def flhXYZ(self, f, l, h):
-            """ Funkcja zajmuje się transformacją współrzędnych geodezyjnych (fi, lambda, h) 
-            na współrzędne ortokartezjańskie (X,Y,Z)
-            Parameters 
-            ----------
-            f, l, h : FLOAT
-                        współrzędne geodezyjne
-                    f - [radiany] - szerokość geodezyjna
-                    l - [radiany] - długość geodezyjna
-                    h - [metry] - wysokość elipsoidalna,
-                    
-            Returns
-            -------
-            X, Y, Z - współrzędne w układzie ortokartezjańskim, 
-                        : FLOAT
-            """
-            
-            N = self.Np(self, f)
-            X = (N + h) * np.cos(f) * np.cos(l)
-            Y = (N + h) * np.cos(f) * np.sin(l)
-            Z = (N * (1-self.ee) + h) * np.sin(f)
-            return(X, Y, Z)
+   
         
     def flhXYZ(self, f, l, h):
+        """ Funkcja zajmuje się transformacją współrzędnych geodezyjnych (fi, lambda, h) 
+        na współrzędne ortokartezjańskie (X,Y,Z)
+        Parameters 
+        ----------
+        f, l, h : FLOAT
+                    współrzędne geodezyjne
+                f - [radiany] - szerokość geodezyjna
+                l - [radiany] - długość geodezyjna
+                h - [metry] - wysokość elipsoidalna,
+                
+        Returns
+        -------
+        X, Y, Z - współrzędne w układzie ortokartezjańskim, 
+                    : FLOAT
+        """
         X_list = []
         Y_list = []
         Z_list = []
@@ -161,7 +144,9 @@ class Transformacje:
                            [np.cos(f),          0,     np.sin(f)]])
         return(R)
         
-    def XYZ2neu(self, X, Y, Z, x0, y0, z0):
+    
+    
+    def XYZ2neu(self, X_list, Y_list, Z_list, x0, y0, z0):
         """ Funcja transformuje współrzędne ortokartezjańskie (X,Y,Z) do układu NEU (North, East,Up ), wykorzystując 
         do tego celu macierz R
         Parameters 
@@ -175,15 +160,6 @@ class Transformacje:
         -------
         dx - wektor współrzędnych przekształconych do układu NEU
         """
-        f, l, h = self.xyz2bhl
-        dX = array[X-x0,
-                   Y-y0,
-                   Z-z0]
-        R = self.macierzR(f, l)
-        dx= R.T @ dX
-        return(dx)
-    
-    def XYZ2neu(self, X_list, Y_list, Z_list, x0, y0, z0):
     
         wynikiNEU= []
         for X, Y, Z in zip(X_list, Y_list, Z_list):
@@ -227,14 +203,14 @@ class Transformacje:
                     nr = None
                     continue
                              
-                e2prim = (self.a**2 - b**2) / b**2
+                e2prim = (self.a**2 - self.b**2) / self.b**2
                 dl = l - l0
                 t = np.tan(f)
                 n = np.sqrt(e2prim * (np.cos(f))**2)
                 N = self.Np(fi)
                 Sigma = self.sigma(f)
                             
-                XGK = Sigma + ((dlam**2)/2) * N * np.sin(f)*np.cos(f) * ( 1+ ((dl**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(n**2) + 4*(n**4)     )  + ((dl**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(n**2) - 330*(n**2)*(t**2))  )
+                XGK = Sigma + ((dl**2)/2) * N * np.sin(f)*np.cos(f) * ( 1+ ((dl**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(n**2) + 4*(n**4)     )  + ((dl**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(n**2) - 330*(n**2)*(t**2))  )
                 YGK = (dl*N* np.cos(f)) * (1+(((dl)**2/6)*(np.cos(f))**2) *(1-(t**2)+(n**2))+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(n**2)-58*(n**2)*(t**2)) )
                              
                 X2000 = xgk * m0
@@ -248,7 +224,7 @@ class Transformacje:
         m0 = 0.9993
         wsp1992 = []
         for f,l in zip(f,l):
-            e2prim = (a**2 - b**2) / b**2   
+            e2prim = (self.a**2 - self.b**2) / self.b**2   
             dl = l - l0
             t = np.tan(f)
             n = np.sqrt(e2prim * (np.cos(f))**2)
