@@ -56,7 +56,7 @@ _Transformacja_ analogiczna do powyższej, wprowadzając współrzędne geodezyj
  
 # WYMAGANIA PROGRAMU
 
-Do poprawnego działania programu należy skorzystać z pythona w wersji 3.6 lub nowszych a także zainstalowaną bibliotekę numpy oraz sys. Program został napisany dla systemu operacyjnego Windows, macOS, Linux.
+Do poprawnego działania programu należy skorzystać z pythona w wersji 3.6 lub nowszych a także zainstalowaną bibliotekę math, numpy oraz sys. Program został napisany dla systemu operacyjnego Windows, macOS, Linux.
 
 # KORZYSTANIE Z PROGRAMU
 
