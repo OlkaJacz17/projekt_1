@@ -6,7 +6,7 @@ między układami.
 
 Obsługuje trzy elipsoidy : wgs84,GRS80 oraz elipsoidę Krasowskiego
 
-
+__TRANSFORMACJE__
 ____Transformacja współrzędnych ortokartezjańskich na geodezyjne (szerokość, długość i wysokość), to znaczy:
 
 __XYZ ==> BLH__
@@ -18,7 +18,6 @@ B - szerokość geodezyjna, program zwraca tą wartość w radianach,
 L - długość geodezyjna, również zwracana w radianach 
 
 H - wysokość, odległość od elipsoidy tą wartość otrzymujemy w metrach.
-
 
 
 
@@ -40,6 +39,11 @@ __BL ==> PL2000__
 _____Transformacja analogiczna do powyższej, wprowadzając współrzędne geodezyjne (szerokość oraz długość) program zwróci współrzędne w układzie PL1992 podane w metrach. Program obsługuje tutaj wszystkie trzy elipsoidy.
 
 __BL ==> PL1992__
+-
+__WYMAGANIA PROGRAMU__
+Do poprawnego działania programu należy skorzystać z pythona w wersji 3.6 lub nowszych a także zainstalowaną bibliotekę numpy oraz sys. Program został napisany dla systemu operacyjnego Windows, macOS, Linux.
 
-______Wymagania programu__
-Do poprawnego działania programu należy skorzystać z pythona w wersji 3.11 a także zainstalowaną bibliotekę numpy oraz sys. Program został napisany dla systemu operacyjnego 
+__KORZYSTANIE Z PROGRAMU__
+_Dane wejściowe_ - dane wprowadzane do programu powinny mieć format pliku .txt 
+
+_Rezulat_ - program zwraca wartości w postaci pliku
