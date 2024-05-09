@@ -30,9 +30,11 @@ Do programu wprowadzamy zmienne B, L podawane w radianach oraz H w metrach, w wy
 
 
 __Transformacja ze współrzędnych ortokartezjańskich do topocentrycznych NEU (North, East, Up), w wyniku tej transformacji otrzymujemy tablicę z wartościami NEU, które są podane w metrach. 
+
 XYZ ==> NEU
 
 __Trnsformacja współrzędnych geodezyjnych na współrzędne w układzie PL2000, które program zwróci nam w metrach.
+
 BL ==> PL2000
 
 __Transformacja analogiczna do powyższej, wprowadzając współrzędne geodezyjne (szerokość oraz długość) program zwróci współrzędne w układzie PL1992 podane w metrach.
