@@ -76,6 +76,31 @@ class Transformacje:
                     break
             l = np.arctan2(Y, X)
             return(f,l,h)
+    
+    def xyz2plh(self, X_list, Y_list, Z_list):
+     f = []
+     l = []
+     h = []
+
+     for X, Y, Z in zip(X_list, Y_list, Z_list):
+         p = np.sqrt(X**2 + Y**2)
+         f = np.arctan(Z / (p * (1 - self.ee)))
+         
+         while True: 
+             N = self.Np(f)
+             h = (p / np.cos(f)) - N
+             fs = f
+             f = np.arctan(Z / (p * (1 - self.ee * (N / (N + h)))))
+             
+             if np.abs(fs - f) < (0.000001 / 206265):
+                 break
+                 
+         l = np.arctan2(Y, X)
+         f.append(f)
+         l.append(l)
+         h.append(h)
+
+     return f,l,h 
   
         
     def flhXYZ(self, f, l, h):
@@ -100,6 +125,22 @@ class Transformacje:
             Y = (N + h) * np.cos(f) * np.sin(l)
             Z = (N * (1-self.ee) + h) * np.sin(f)
             return(X, Y, Z)
+        
+    def flhXYZ(self, f, l, h):
+        X_list = []
+        Y_list = []
+        Z_list = []
+
+        for f, l, h in zip(f, l, h):
+            N = self.Np(f)
+            X = (N + h) * np.cos(f) * np.cos(l)
+            Y = (N + h) * np.cos(f) * np.sin(l)
+            Z = (N * (1 - self.ee) + h) * np.sin(f)
+            X_list.append(X)
+            Y_list.append(Y)
+            Z_list.append(Z)
+
+        return X_list, Y_list, Z_list
         
     def macierzR(self,f,l):
         """ Funkcja tworzy macierz R potrzebną do transformacji współrzędnych ortokartezjańskich  (X, Y, Z) do 
@@ -142,71 +183,91 @@ class Transformacje:
         dx= R.T @ dX
         return(dx)
     
-    def ustal_parametry(self, l):
-        if l >= 13.5 and l < 16.5:
-            l02000 = 15 * np.pi / 180
-            nr = 5
-        elif l >= 16.5 and l < 19.5:
-            l02000 = 18 * np.pi / 180
-            nr = 6
-        elif l >= 19.5 and l < 22.5:
-            l02000 = 21 * np.pi / 180
-            nr = 7
-        elif l >= 22.5 and l < 25.5:
-            l02000 = 24 * np.pi / 180
-            nr = 8
-        else:
-            l02000 = None
-            nr = None
-        return l02000, nr
+    def XYZ2neu(self, X_list, Y_list, Z_list, x0, y0, z0):
+    
+        wynikiNEU= []
+        for X, Y, Z in zip(X_list, Y_list, Z_list):
+         dX = np.array([X - x0, Y - y0, Z - z0])
+         R = macierzR(f, l) 
+         dx = np.dot(np.transpose(R), dX)
+         wynikiNEU.append(dx.tolist())
+        return wynikiNEU
 
     
-    def sigma2000(self, f):
+    def sigma(self, f):
         A0 = 1 - self.ee/4 - 3*self.ee**2/64 - 5*self.ee**3/256
         A2 = (3/8) * (self.ee + self.ee**2/4 + 15*self.ee**3/128)
         A4 = (15/256) * (self.ee**2 + 3*self.ee**3/4)
         A6 = (35*self.ee**3)/3072
         si = a * (A0 * f - A2 * np.sin(2*f) + A4 * np.sin(4*f) - A6 * np.sin(6*f))
-        return(si2000)
+        return(sigma)
+    
+    
+    def fl22000(self, f, l):
+            m0 = 0.999923
+            wsp2000 = []
+            
+            for f, l in zip(f,l):
+                l0 = 0 
+                strefa = 0
+                if l >= 13.5 and l < 16.5:
+                    l0 = 15 * np.pi / 180
+                    nr = 5
+                elif l >= 16.5 and l < 19.5:
+                    l0 = 18 * np.pi / 180
+                    nr = 6
+                elif l >= 19.5 and l < 22.5:
+                    l0 = 21 * np.pi / 180
+                    nr = 7
+                elif l >= 22.5 and l < 25.5:
+                    l0 = 24 * np.pi / 180
+                    nr = 8
+                else:
+                    l0 = None
+                    nr = None
+                    continue
+                             
+                e2prim = (self.a**2 - b**2) / b**2
+                dl = l - l0
+                t = np.tan(f)
+                n = np.sqrt(e2prim * (np.cos(f))**2)
+                N = self.Np(fi)
+                Sigma = self.sigma(f)
+                            
+                XGK = Sigma + ((dlam**2)/2) * N * np.sin(f)*np.cos(f) * ( 1+ ((dl**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(n**2) + 4*(n**4)     )  + ((dl**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(n**2) - 330*(n**2)*(t**2))  )
+                YGK = (dl*N* np.cos(f)) * (1+(((dl)**2/6)*(np.cos(f))**2) *(1-(t**2)+(n**2))+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(n**2)-58*(n**2)*(t**2)) )
+                             
+                X2000 = xgk * m0
+                Y2000 = ygk * m0 + strefa*1000000 + 500000
+                wsp.append([X2000, Y2000])
+                    
+            return(wsp2000) 
 
-    def wsploknagausskruger(self,si,l, l02000 ,f):
-        b2 = self.a**2 * (1-self.ee)
-        e22 = (self.a**2 - b2) / b2
-        dl = l - l02000
-        t = tan(f)
-        eta2 = e22 * (cos(f))**2
-        N = a / (sqrt(1-e2 * sin(f)**2))
-        xgk = si + (dl**2/2) * N * np.sin(f) * np.cos(f) * ((1 + (dl**2/12)*(np.cos(f))**2 * (5 -t**2 +9*eta2 + 4*eta2**2) + (dl**4/360) * np.cos(f)**4 * (61 - 58 * t**2 + t**4 + 270*eta2 - 330 * eta2 * t**2)))
-        ygk = dl * N * np.cos(f) * (1 + (dl**2/6) * np.cos(f)**2 * (1 - t**2 + eta2) + (dl**4/120) * cos(f)**4 * (5 - 18*t**2 + t**4 + 14*eta2 - 58*eta2*t**2))
-        return(xgk2000, ygk2000)
+    def fl21992(self, f, l):
+        l0 = (19 * np.pi)/180
+        m0 = 0.9993
+        wsp1992 = []
+        for f,l in zip(f,l):
+            e2prim = (a**2 - b**2) / b**2   
+            dl = l - l0
+            t = np.tan(f)
+            n = np.sqrt(e2prim * (np.cos(f))**2)
+            N = self.Np(f)
+            Sigma = self.sigma(f)
+                 
+            XGK = Sigma + ((dl**2)/2)*N*np.sin(f)*np.cos(f) * ( 1+ ((dl**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(n**2) + 4*(n**4) ) + ((dl**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(n**2) - 330*(n**2)*(t**2))  )
+            YGK = (dl*N* np.cos(f)) * (1+(((dl)**2/6)*(np.cos(f))**2) *(1-(t**2)+(n**2))+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(n**2)-58*(n**2)*(t**2)) )
+            
+            X1992 = XGK * m0 - 5300000
+            Y1992 = YGK * m0 + 500000
+            wsp.append([X1992, Y1992]) 
+            
+        return(wsp1992)
   
-    def uklad2000(xgk2000,ygk2000,nr):
-       m2000 = 0.999923
-       x2000 = xgk * m2000
-       y2000 = ygk * m2000 + nr * 1000000 + 500000
-       return(x2000,y2000)
-   
  
    
     
-    def wsploknagausskruger(self,si,l,f):
-        l01992 = 19*np.pi/180
-        b2 = self.a**2 * (1-self.ee)
-        e22 = (self.a**2 - b2) / b2
-        dl = l - l092
-        t = tan(f)
-        eta2 = e22 * (cos(f))**2
-        N = self.a / (sqrt(1-e2 * sin(f)**2))
-        xgk = si + (dl**2/2) * N * np.sin(f) * np.cos(f) * ((1 + (dl**2/12)*(np.cos(f))**2 * (5 -t**2 +9*eta2 + 4*eta2**2) + (dl**4/360) * np.cos(f)**4 * (61 - 58 * t**2 + t**4 + 270*eta2 - 330 * eta2 * t**2)))
-        ygk = dl * N * np.cos(f) * (1 + (dl**2/6) * np.cos(f)**2 * (1 - t**2 + eta2) + (dl**4/120) * cos(f)**4 * (5 - 18*t**2 + t**4 + 14*eta2 - 58*eta2*t**2))
-        return(xgk, ygk)
-    
-    def uklad1992(xgk,ygk):
-        m1992 = 0.9993
-        x1992 = xgk * m1992 - 5300000
-        y1992 = ygk * m1992 + 500000
-        return(x1992,y1992)
-        
+  
         
         
 if __name__ == "__main__":
@@ -271,6 +332,42 @@ nazwa_pliku = "WYNIKI.txt"
 zapisz_do_pliku_txt(wyniki, nazwa_pliku)
     # if '--plh2xyz' in sys.argv:
     #     x, y,z = flhxyz(f, l, h)
+    
+    
+
+model = {'WGS84': [6378137.000, 6356752.31424518], 'GRS80': [6378137.000, 6356752.31414036], 'KRASOWSKI': [6378245.000, 6356863.019]}
+transformacje = {'XYZ2flh': 'XYZ2flh', 'flh2XYZ': 'flh2XYZ','XYZ2neu': 'XYZ2neu', 'fl22000': 'fl22000', 'fl21992': 'fl21992'}
+
+try:
+    while True:
+        if len(sys.argv) <= 1:
+            args_model = input('Podaj nazwe elipsoidy: ')
+            args_dane = input('Wklej sciezke do pliku txt z danymi: ')
+            args_transformacja = input('Podaj nazwę transformacji, którą chcesz wykonać: ')
+        else:
+            args_model = sys.argv[1]
+            args_dane = sys.argv[2]
+            args_transformacja = sys.argv[3]
+
+        obiekt = Transformacje(model[args_model.upper()])
+        wyniki = obiekt.wczytywanie(args_dane, Transformacje[args_transformacja.upper()])
+        
+        print('Plik z wynikami został utworzony.')
+        
+        wybor = input('Jezeli chcesz wykonac kolejna transformacje wpisz TAK, jeśli chcesz zakonczyc KONIEC: ').upper()
+        if wybor != 'TAK':
+            break
+
+except FileNotFoundError:
+    print('Podany plik nie istnieje.')
+except KeyError:
+    print('Zła podana elipsoida lub transformacja.')
+except IndexError:
+    print('Zły format danych w pliku.')
+except ValueError:
+    print('Zły format danych w pliku.')
+finally:
+    print('Koniec programu')
         
         
         
