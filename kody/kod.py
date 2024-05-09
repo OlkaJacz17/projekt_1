@@ -54,16 +54,16 @@ class Transformacje:
         W wyniku 3-4-krotneej iteracji wyznaczenia wsp. phi można przeliczyć współrzędne z dokładnoscią ok 1 cm.     
         Parameters
         ----------
-        X, Y, Z : FLOAT
-             współrzędne w układzie orto-kartezjańskim, 
+        X_list, Y_list, Z_list : LIST
+              współrzędne w układzie orto-kartezjańskim podawane w metrach, równej długosci listy, których elementy są typu FLOAT
 
         Returns
         -------
-        lat
-            [stopnie dziesiętne] - szerokość geodezyjna
-        lon
-            [stopnie dziesiętne] - długośc geodezyjna.
-        h : TYPE
+        f : LIST
+            [radiany] - szerokość geodezyjna
+        l : LIST
+            [radiany] - długośc geodezyjna.
+        h : LIST
             [metry] - wysokość elipsoidalna
         """
         
@@ -99,16 +99,17 @@ class Transformacje:
         na współrzędne ortokartezjańskie (X,Y,Z)
         Parameters 
         ----------
-        f, l, h : FLOAT
-                    współrzędne geodezyjne
+        f, l, h : LIST
+                    listy współrzędnych geodezyjnych, których elementy mają typ FLOAT
                 f - [radiany] - szerokość geodezyjna
                 l - [radiany] - długość geodezyjna
                 h - [metry] - wysokość elipsoidalna,
+        
                 
         Returns
         -------
-        X, Y, Z - współrzędne w układzie ortokartezjańskim, 
-                    : FLOAT
+        X_list, Y_list, Z_list : LIST
+                    - listy współrzędnych w układzie ortokartezjańskim, których elementy są typu FLOAT
         """
         X_list = []
         Y_list = []
@@ -127,7 +128,7 @@ class Transformacje:
         
     def macierzR(self,f,l):
         """ Funkcja tworzy macierz R potrzebną do transformacji współrzędnych ortokartezjańskich  (X, Y, Z) do 
-        współrzędnych układu NEU.
+        współrzędnych układu topocentrycznego NEU (North, East, Up).
         Parameters
         ----------
         f, l : FLOAT
@@ -135,8 +136,9 @@ class Transformacje:
         
         Returns
         -------
-        R : FLOAT
-                R jest macierzą dwuwymiarową,
+        R : np.ndarray
+                R jest macierzą dwuwymiarową, istotną w transformacji współrzędnych z układu ortokartezjańskiego (X, Y, Z) do układu
+                topocentrycznego NEU (North, East, Up)
         """
         
         R = np.array([[-np.sin(f)*np.cos(l), -np.sin(l), np.cos(f)*np.cos(l)],
@@ -148,17 +150,18 @@ class Transformacje:
     
     def XYZ2neu(self, X_list, Y_list, Z_list, x0, y0, z0):
         """ Funcja transformuje współrzędne ortokartezjańskie (X,Y,Z) do układu NEU (North, East,Up ), wykorzystując 
-        do tego celu macierz R
+        do tego celu macierz R, która umożliwia transformację współrzędnych
         Parameters 
         ----------
-        X, Y, Z : FLOAT
-                    współrzędne ortokartezjańskie punktów
+        X_list, Y_list, Z_list : LIST
+                                 listy współrzędnych ortokartezjańskich punktów
         x0, y0, z0 : FLOAT
                         współrzędne ostokartezjańskie punktu odniesienia
         
         Returns
         -------
-        dx - wektor współrzędnych przekształconych do układu NEU
+        wynikiNEU : LIST
+                    listy wektorów współrzędnych przekształconych do układu NEU
         """
     
         wynikiNEU= []
@@ -171,19 +174,49 @@ class Transformacje:
 
     
     def sigma(self, f):
+        """ 
+        Funkcja okresla wartoć sigma dzięki podanej wartosci f, funkcja jest kluczowa w transformacji współrzędnych geodezyjnych (fi, lambda, h)
+        do układu PL2000, którego współrzędnycmi są (X2000, Y2000) podane w metrach.
+        Parameters 
+        ----------
+        f : FLOAT
+                szerokosć geodezyjna podawana w radianach
+                
+        Returns 
+        -------
+        sigma : FLOAT
+                wartosć używana w transformacji ze współrzędnych geocentrycznych do układu PL2000, wartosc zwracana w metrach
+        """
         A0 = 1 - self.ee/4 - 3*self.ee**2/64 - 5*self.ee**3/256
         A2 = (3/8) * (self.ee + self.ee**2/4 + 15*self.ee**3/128)
         A4 = (15/256) * (self.ee**2 + 3*self.ee**3/4)
         A6 = (35*self.ee**3)/3072
-        si = a * (A0 * f - A2 * np.sin(2*f) + A4 * np.sin(4*f) - A6 * np.sin(6*f))
+        sigma = self.a * (A0 * f - A2 * np.sin(2*f) + A4 * np.sin(4*f) - A6 * np.sin(6*f))
         return(sigma)
     
     
     def fl22000(self, f, l):
-            m0 = 0.999923
-            wsp2000 = []
+        """  
+        Funkcja ma przekształca współrzędne geodezyjne (fi, lambda) na współrzędne w układzie PL2000 (X2000, Y2000), funkcja wykorzystuje
+        wartosć sigma do transformacji współrzędnych
+        Parameters
+        ----------
+        f : FLOAT
+                szerokosć geodezyjna, wartosć podawana w radianach
+        l : FLOAT
+                dlugosc geodezyjna, wartosc podawana w radianach
+                
+        Returns
+        -------
+        wsp2000 : LIST
+                lista par współrzędnych otrzymanych w układzie PL2000 (X2000, Y2000), elementy listy są formatu FLOAT,
+                jednostką zwróconych wartosci są metry
+        
+        """
+    m0 = 0.999923
+    wsp2000 = []
             
-            for f, l in zip(f,l):
+    for f, l in zip(f,l):
                 l0 = 0 
                 strefa = 0
                 if l >= 13.5 and l < 16.5:
@@ -207,19 +240,34 @@ class Transformacje:
                 dl = l - l0
                 t = np.tan(f)
                 n = np.sqrt(e2prim * (np.cos(f))**2)
-                N = self.Np(fi)
+                N = self.Np(f)
                 Sigma = self.sigma(f)
                             
                 XGK = Sigma + ((dl**2)/2) * N * np.sin(f)*np.cos(f) * ( 1+ ((dl**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(n**2) + 4*(n**4)     )  + ((dl**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(n**2) - 330*(n**2)*(t**2))  )
                 YGK = (dl*N* np.cos(f)) * (1+(((dl)**2/6)*(np.cos(f))**2) *(1-(t**2)+(n**2))+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(n**2)-58*(n**2)*(t**2)) )
                              
-                X2000 = xgk * m0
-                Y2000 = ygk * m0 + strefa*1000000 + 500000
-                wsp.append([X2000, Y2000])
-                    
-            return(wsp2000) 
+                X2000 = XGK * m0
+                Y2000 = YGK * m0 + strefa*1000000 + 500000
+                wsp2000.append([X2000, Y2000])
+    return(wsp2000) 
 
     def fl21992(self, f, l):
+        """ 
+        Funcja przy pomocy wartosci sigma przekształca współrzędne geodezyjne (fi, lambda) do układu PL1992 (X1992, Y1992)
+        Parameters
+        ----------
+        f : FLOAT
+                szerokoć geodezyjna wyrażona w radianach
+        l : FLOAT 
+                długosć geodezyjna wyrażona w radianach
+                
+        Returns
+        -------
+        wsp1992 : LIST
+                lista podanych w parach współrzędnych w układzie PL1992 (X1992, Y1992), lista zawiera elementy typu FLOAT
+                wyrażonych w metrach
+        
+        """
         l0 = (19 * np.pi)/180
         m0 = 0.9993
         wsp1992 = []
@@ -236,7 +284,7 @@ class Transformacje:
             
             X1992 = XGK * m0 - 5300000
             Y1992 = YGK * m0 + 500000
-            wsp.append([X1992, Y1992]) 
+            wsp1992.append([X1992, Y1992]) 
             
         return(wsp1992)
   
