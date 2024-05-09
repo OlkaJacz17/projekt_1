@@ -7,7 +7,9 @@ między układami.
 Obsługuje trzy elipsoidy : wgs84,GRS80 oraz elipsoidę Krasowskiego
 
 __TRANSFORMACJE__
-____Transformacja współrzędnych ortokartezjańskich na geodezyjne (szerokość, długość i wysokość), to znaczy:
+
+
+Transformacja współrzędnych ortokartezjańskich na geodezyjne (szerokość, długość i wysokość), to znaczy:
 
 __XYZ ==> BLH__
 
