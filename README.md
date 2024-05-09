@@ -7,9 +7,9 @@ między układami.
 Obsługuje trzy elipsoidy : wgs84,GRS80 oraz elipsoidę Krasowskiego
 
 
-__Transformacja współrzędnych ortokartezjańskich na geodezyjne (szerokość, długość i wysokość), to znaczy:
+____Transformacja współrzędnych ortokartezjańskich na geodezyjne (szerokość, długość i wysokość), to znaczy:
 
-XYZ ==> BLH
+__XYZ ==> BLH__
 
 Program przyjmuje współrzędne ortokartezjańskie i przy użyciu algorytmu Hirvonena przekształca je na współrzędne geodezyjne, gdzie:
 
@@ -22,21 +22,24 @@ H - wysokość, odległość od elipsoidy tą wartość otrzymujemy w metrach.
 
 
 
-__Transformacja odwrotna, przekształca współrzędne geodezyjne na ortokartezjańskie:
+____Transformacja odwrotna, przekształca współrzędne geodezyjne na ortokartezjańskie:
 
-BLH ==> XYZ
+__BLH ==> XYZ__
 
 Do programu wprowadzamy zmienne B, L podawane w radianach oraz H w metrach, w wyniku otrzymujemy współrzędne X, Y, Z w metrach.
 
 
-__Transformacja ze współrzędnych ortokartezjańskich do topocentrycznych NEU (North, East, Up), w wyniku tej transformacji otrzymujemy tablicę z wartościami NEU, które są podane w metrach. 
+____Transformacja ze współrzędnych ortokartezjańskich do topocentrycznych NEU (North, East, Up), w wyniku tej transformacji otrzymujemy tablicę z wartościami NEU, które są podane w metrach. 
 
-XYZ ==> NEU
+__XYZ ==> NEU__
 
-__Trnsformacja współrzędnych geodezyjnych na współrzędne w układzie PL2000, które program zwróci nam w metrach.
+_____Transformacja współrzędnych geodezyjnych na współrzędne w układzie PL2000, które program zwróci nam w metrach.Program obsługuje tutaj wszytskie trzy elipsoidy.
 
-BL ==> PL2000
+__BL ==> PL2000__
 
-__Transformacja analogiczna do powyższej, wprowadzając współrzędne geodezyjne (szerokość oraz długość) program zwróci współrzędne w układzie PL1992 podane w metrach.
+_____Transformacja analogiczna do powyższej, wprowadzając współrzędne geodezyjne (szerokość oraz długość) program zwróci współrzędne w układzie PL1992 podane w metrach. Program obsługuje tutaj wszystkie trzy elipsoidy.
 
-BL ==> PL1992
+__BL ==> PL1992__
+
+______Wymagania programu__
+Do poprawnego działania programu należy skorzystać z pythona w wersji 3.11 a także zainstalowaną bibliotekę numpy oraz sys. Program został napisany dla systemu operacyjnego 
