@@ -6,7 +6,7 @@ między układami.
 
 Obsługuje trzy elipsoidy : wgs84,GRS80 oraz elipsoidę Krasowskiego
 
-__TRANSFORMACJE__
+# __TRANSFORMACJE__
 
 
 __XYZ ==> BLH__
@@ -46,11 +46,11 @@ _____Transformacja analogiczna do powyższej, wprowadzając współrzędne geode
 
 
  
-__WYMAGANIA PROGRAMU__
+#__WYMAGANIA PROGRAMU__
 
 Do poprawnego działania programu należy skorzystać z pythona w wersji 3.6 lub nowszych a także zainstalowaną bibliotekę numpy oraz sys. Program został napisany dla systemu operacyjnego Windows, macOS, Linux.
 
-__KORZYSTANIE Z PROGRAMU__
+# __KORZYSTANIE Z PROGRAMU__
 
 _Dane wejściowe_ - dane wprowadzane do programu powinny mieć format pliku .txt 
 
