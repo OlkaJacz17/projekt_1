@@ -1,6 +1,6 @@
 from math import *
 import numpy as np
-import sys
+from argparse import *
 
 o = object()
 
@@ -89,12 +89,12 @@ class Transformacje:
              l.append(l)
              h.append(h)
 
-        return f,l,h 
+        return(f,l,h)
   
         
    
         
-    def flhXYZ(self, f, l, h):
+    def flh2XYZ(self, f, l, h):
         """ Funkcja zajmuje się transformacją współrzędnych geodezyjnych (fi, lambda, h) 
         na współrzędne ortokartezjańskie (X,Y,Z)
         Parameters 
@@ -124,7 +124,7 @@ class Transformacje:
             Y_list.append(Y)
             Z_list.append(Z)
 
-        return X_list, Y_list, Z_list
+        return(X_list, Y_list, Z_list)
         
     def macierzR(self,f,l):
         """ Funkcja tworzy macierz R potrzebną do transformacji współrzędnych ortokartezjańskich  (X, Y, Z) do 
@@ -170,7 +170,7 @@ class Transformacje:
          R = macierzR(f, l) 
          dx = np.dot(np.transpose(R), dX)
          wynikiNEU.append(dx.tolist())
-        return wynikiNEU
+        return(wynikiNEU)
 
     
     def sigma(self, f):
@@ -213,10 +213,10 @@ class Transformacje:
                 jednostką zwróconych wartosci są metry
         
         """
-    m0 = 0.999923
-    wsp2000 = []
+        m0 = 0.999923
+        wyniki2000 = []
             
-    for f, l in zip(f,l):
+        for f, l in zip(f,l):
                 l0 = 0 
                 strefa = 0
                 if l >= 13.5 and l < 16.5:
@@ -249,7 +249,7 @@ class Transformacje:
                 X2000 = XGK * m0
                 Y2000 = YGK * m0 + strefa*1000000 + 500000
                 wsp2000.append([X2000, Y2000])
-    return(wsp2000) 
+                return(wyniki2000) 
 
     def fl21992(self, f, l):
         """ 
@@ -270,7 +270,7 @@ class Transformacje:
         """
         l0 = (19 * np.pi)/180
         m0 = 0.9993
-        wsp1992 = []
+        wyniki1992 = []
         for f,l in zip(f,l):
             e2prim = (self.a**2 - self.b**2) / self.b**2   
             dl = l - l0
@@ -286,7 +286,7 @@ class Transformacje:
             Y1992 = YGK * m0 + 500000
             wsp1992.append([X1992, Y1992]) 
             
-        return(wsp1992)
+        return(wyniki1992)
   
  
    
@@ -342,56 +342,59 @@ X, Y, Z = wczytaj_plik_wspolrzednych(nazwa_pliku)
 
 
 
-def zapisz_do_pliku_txt(wyniki, nazwa_pliku):
-    try:
-        with open(nazwa_pliku, 'w') as plik:
-            for wiersz in wyniki:
-                plik.write(str(wiersz) + '\n')
-        print("Wyniki zostały zapisane do pliku", nazwa_pliku)
-    except IOError:
-        print("Błąd podczas zapisywania do pliku", nazwa_pliku)
+# def zapisz_do_pliku_txt(wyniki, nazwa_pliku):
+#     try:
+#         with open(nazwa_pliku, 'w') as plik:
+#             for wiersz in wyniki:
+#                 plik.write(str(wiersz) + '\n')
+#         print("Wyniki zostały zapisane do pliku", nazwa_pliku)
+#     except IOError:
+#         print("Błąd podczas zapisywania do pliku", nazwa_pliku)
 
-wyniki = [f, l, h, X, Y, Z, dx, x2000, y2000, x92, y92]
-nazwa_pliku = "WYNIKI.txt"
-zapisz_do_pliku_txt(wyniki, nazwa_pliku)
-    # if '--plh2xyz' in sys.argv:
-    #     x, y,z = flhxyz(f, l, h)
+# wyniki = [f, l, h, X, Y, Z, dx, x2000, y2000, x92, y92]
+# nazwa_pliku = "WYNIKI.txt"
+# zapisz_do_pliku_txt(wyniki, nazwa_pliku)
+#     # if '--plh2xyz' in sys.argv:
+#     #     x, y,z = flhxyz(f, l, h)
     
     
 
-model = {'WGS84': [6378137.000, 6356752.31424518], 'GRS80': [6378137.000, 6356752.31414036], 'KRASOWSKI': [6378245.000, 6356863.019]}
-transformacje = {'XYZ2flh': 'XYZ2flh', 'flh2XYZ': 'flh2XYZ','XYZ2neu': 'XYZ2neu', 'fl22000': 'fl22000', 'fl21992': 'fl21992'}
+# model = {'WGS84': [6378137.000, 6356752.31424518], 'GRS80': [6378137.000, 6356752.31414036], 'KRASOWSKI': [6378245.000, 6356863.019]}
+# transformacje = {'XYZ2flh': 'XYZ2flh', 'flh2XYZ': 'flh2XYZ','XYZ2neu': 'XYZ2neu', 'fl22000': 'fl22000', 'fl21992': 'fl21992'}
 
-try:
-    while True:
-        if len(sys.argv) <= 1:
-            args_model = input('Podaj nazwe elipsoidy: ')
-            args_dane = input('Wklej sciezke do pliku txt z danymi: ')
-            args_transformacja = input('Podaj nazwę transformacji, którą chcesz wykonać: ')
-        else:
-            args_model = sys.argv[1]
-            args_dane = sys.argv[2]
-            args_transformacja = sys.argv[3]
+# try:
+#     while True:
+#         if len(sys.argv) <= 1:
+#             args_model = input('Podaj nazwe elipsoidy: ')
+#             args_dane = input('Wklej sciezke do pliku txt z danymi: ')
+#             args_transformacja = input('Podaj nazwę transformacji, którą chcesz wykonać: ')
+#         else:
+#             args_model = sys.argv[1]
+#             args_dane = sys.argv[2]
+#             args_transformacja = sys.argv[3]
 
-        obiekt = Transformacje(model[args_model.upper()])
-        wyniki = obiekt.wczytywanie(args_dane, Transformacje[args_transformacja.upper()])
+#         obiekt = Transformacje(model[args_model.upper()])
+#         wyniki = obiekt.wczytywanie(args_dane, Transformacje[args_transformacja.upper()])
         
-        print('Plik z wynikami został utworzony.')
+#         print('Plik z wynikami został utworzony.')
         
-        wybor = input('Jezeli chcesz wykonac kolejna transformacje wpisz TAK, jeśli chcesz zakonczyc KONIEC: ').upper()
-        if wybor != 'TAK':
-            break
+#         wybor = input('Jezeli chcesz wykonac kolejna transformacje wpisz TAK, jeśli chcesz zakonczyc KONIEC: ').upper()
+#         if wybor != 'TAK':
+#             break
 
-except FileNotFoundError:
-    print('Podany plik nie istnieje.')
-except KeyError:
-    print('Zła podana elipsoida lub transformacja.')
-except IndexError:
-    print('Zły format danych w pliku.')
-except ValueError:
-    print('Zły format danych w pliku.')
-finally:
-    print('Koniec programu')  
+# except FileNotFoundError:
+#     print('Podany plik nie istnieje.')
+# except KeyError:
+#     print('Zła podana elipsoida lub transformacja.')
+# except IndexError:
+#     print('Zły format danych w pliku.')
+# except ValueError:
+#     print('Zły format danych w pliku.')
+# finally:
+#     print('Koniec programu')  
+  
+
+
         
         
         
