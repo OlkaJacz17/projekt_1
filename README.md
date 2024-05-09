@@ -21,6 +21,8 @@ L - długość geodezyjna, również zwracana w radianach
 
 H - wysokość, odległość od elipsoidy tą wartość otrzymujemy w metrach.
 
+_______________________________________________________________________
+
 
 __BLH ==> XYZ__
 
@@ -28,17 +30,22 @@ ____Transformacja odwrotna, przekształca współrzędne geodezyjne na ortokarte
 
 Do programu wprowadzamy zmienne B, L podawane w radianach oraz H w metrach, w wyniku otrzymujemy współrzędne X, Y, Z w metrach.
 
+___________________________________________________________
+
 
 __XYZ ==> NEU__
 
 ____Transformacja ze współrzędnych ortokartezjańskich do topocentrycznych NEU (North, East, Up), w wyniku tej transformacji otrzymujemy tablicę z wartościami NEU, które są podane w metrach. 
 
 
+_____________________________________________________________
+
 __BL ==> PL2000__
 
 _____Transformacja współrzędnych geodezyjnych na współrzędne w układzie PL2000, które program zwróci nam w metrach.Program obsługuje tutaj wszytskie trzy elipsoidy.
 
 
+____________________________________________________________
 
 __BL ==> PL1992__
 
