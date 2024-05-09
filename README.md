@@ -9,9 +9,9 @@ Obsługuje trzy elipsoidy : wgs84,GRS80 oraz elipsoidę Krasowskiego
 __TRANSFORMACJE__
 
 
-Transformacja współrzędnych ortokartezjańskich na geodezyjne (szerokość, długość i wysokość), to znaczy:
-
 __XYZ ==> BLH__
+
+Transformacja współrzędnych ortokartezjańskich na geodezyjne (szerokość, długość i wysokość), to znaczy:
 
 Program przyjmuje współrzędne ortokartezjańskie i przy użyciu algorytmu Hirvonena przekształca je na współrzędne geodezyjne, gdzie:
 
@@ -22,30 +22,37 @@ L - długość geodezyjna, również zwracana w radianach
 H - wysokość, odległość od elipsoidy tą wartość otrzymujemy w metrach.
 
 
+__BLH ==> XYZ__
 
 ____Transformacja odwrotna, przekształca współrzędne geodezyjne na ortokartezjańskie:
-
-__BLH ==> XYZ__
 
 Do programu wprowadzamy zmienne B, L podawane w radianach oraz H w metrach, w wyniku otrzymujemy współrzędne X, Y, Z w metrach.
 
 
-____Transformacja ze współrzędnych ortokartezjańskich do topocentrycznych NEU (North, East, Up), w wyniku tej transformacji otrzymujemy tablicę z wartościami NEU, które są podane w metrach. 
-
 __XYZ ==> NEU__
 
-_____Transformacja współrzędnych geodezyjnych na współrzędne w układzie PL2000, które program zwróci nam w metrach.Program obsługuje tutaj wszytskie trzy elipsoidy.
+____Transformacja ze współrzędnych ortokartezjańskich do topocentrycznych NEU (North, East, Up), w wyniku tej transformacji otrzymujemy tablicę z wartościami NEU, które są podane w metrach. 
+
 
 __BL ==> PL2000__
 
-_____Transformacja analogiczna do powyższej, wprowadzając współrzędne geodezyjne (szerokość oraz długość) program zwróci współrzędne w układzie PL1992 podane w metrach. Program obsługuje tutaj wszystkie trzy elipsoidy.
+_____Transformacja współrzędnych geodezyjnych na współrzędne w układzie PL2000, które program zwróci nam w metrach.Program obsługuje tutaj wszytskie trzy elipsoidy.
+
+
 
 __BL ==> PL1992__
--
+
+_____Transformacja analogiczna do powyższej, wprowadzając współrzędne geodezyjne (szerokość oraz długość) program zwróci współrzędne w układzie PL1992 podane w metrach. Program obsługuje tutaj wszystkie trzy elipsoidy.
+
+
+ 
 __WYMAGANIA PROGRAMU__
+
 Do poprawnego działania programu należy skorzystać z pythona w wersji 3.6 lub nowszych a także zainstalowaną bibliotekę numpy oraz sys. Program został napisany dla systemu operacyjnego Windows, macOS, Linux.
 
 __KORZYSTANIE Z PROGRAMU__
+
 _Dane wejściowe_ - dane wprowadzane do programu powinny mieć format pliku .txt 
+
 
 _Rezulat_ - program zwraca wartości w postaci pliku
