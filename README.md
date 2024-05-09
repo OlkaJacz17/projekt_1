@@ -4,14 +4,14 @@ Transformacja współrzędnych geodezyjnych
 Utworzony przez nas program służy do transformacji współrzędnych
 między układami. 
 
-Obsługuje trzy elipsoidy : wgs84,GRS80 oraz elipsoidę Krasowskiego
+Obsługuje trzy elipsoidy : __wgs84__,  __GRS80__ oraz __elipsoidę Krasowskiego__
 
 # __TRANSFORMACJE__
 
 
 __XYZ ==> BLH__
 
-Transformacja współrzędnych ortokartezjańskich na geodezyjne (szerokość, długość i wysokość), to znaczy:
+_Transformacja współrzędnych ortokartezjańskich na geodezyjne_ (szerokość, długość i wysokość), to znaczy:
 
 Program przyjmuje współrzędne ortokartezjańskie i przy użyciu algorytmu Hirvonena przekształca je na współrzędne geodezyjne, gdzie:
 
@@ -26,7 +26,7 @@ _______________________________________________________________________
 
 __BLH ==> XYZ__
 
-____Transformacja odwrotna, przekształca współrzędne geodezyjne na ortokartezjańskie:
+_Transformacja odwrotna, przekształca współrzędne geodezyjne na ortokartezjańskie_:
 
 Do programu wprowadzamy zmienne B, L podawane w radianach oraz H w metrach, w wyniku otrzymujemy współrzędne X, Y, Z w metrach.
 
@@ -35,14 +35,15 @@ ___________________________________________________________
 
 __XYZ ==> NEU__
 
-____Transformacja ze współrzędnych ortokartezjańskich do topocentrycznych NEU (North, East, Up), w wyniku tej transformacji otrzymujemy tablicę z wartościami NEU, które są podane w metrach. 
+_Transformacja ze współrzędnych ortokartezjańskich do topocentrycznych NEU_ (North, East, Up), 
+w wyniku tej transformacji otrzymujemy tablicę z wartościami NEU, które są podane w metrach. 
 
 
 _____________________________________________________________
 
 __BL ==> PL2000__
 
-_____Transformacja współrzędnych geodezyjnych na współrzędne w układzie PL2000, które program zwróci nam w metrach.Program obsługuje tutaj wszytskie trzy elipsoidy.
+_Transformacja współrzędnych geodezyjnych na współrzędne w układzie PL2000_, które program zwróci nam w metrach.Program obsługuje tutaj wszytskie trzy elipsoidy.
 
 
 ____________________________________________________________
