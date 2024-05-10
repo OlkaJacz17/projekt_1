@@ -1,7 +1,7 @@
 from math import *
 import numpy as np
 from argparse import *
-from sys.argv import *
+import sys
 
 o = object()
 
@@ -49,129 +49,167 @@ class Transformacje:
         return(N)
         
   
-    def xyz2plh(self, X_list, Y_list, Z_list):
-        """" Algorytm Hirvonena - algorytm transformacji współrzędnych ortokartezjańskich (x, y, z)
-        na współrzędne geodezyjne długość szerokość i wysokośc elipsoidalna (phi, lam, h). Jest to proces iteracyjny. 
-        W wyniku 3-4-krotneej iteracji wyznaczenia wsp. phi można przeliczyć współrzędne z dokładnoscią ok 1 cm.     
-        Parameters
-        ----------
-        X_list, Y_list, Z_list : LIST
-              współrzędne w układzie orto-kartezjańskim podawane w metrach, równej długosci listy, których elementy są typu FLOAT
+    # def xyz2plh(self, X_list, Y_list, Z_list):
+    #     """" Algorytm Hirvonena - algorytm transformacji współrzędnych ortokartezjańskich (x, y, z)
+    #     na współrzędne geodezyjne długość szerokość i wysokośc elipsoidalna (phi, lam, h). Jest to proces iteracyjny. 
+    #     W wyniku 3-4-krotneej iteracji wyznaczenia wsp. phi można przeliczyć współrzędne z dokładnoscią ok 1 cm.     
+    #     Parameters
+    #     ----------
+    #     X_list, Y_list, Z_list : LIST
+    #           współrzędne w układzie orto-kartezjańskim podawane w metrach, równej długosci listy, których elementy są typu FLOAT
 
-        Returns
-        -------
-        f : LIST
-            [radiany] - szerokość geodezyjna
-        l : LIST
-            [radiany] - długośc geodezyjna.
-        h : LIST
-            [metry] - wysokość elipsoidalna
-        """
+    #     Returns
+    #     -------
+    #     f : LIST
+    #         [radiany] - szerokość geodezyjna
+    #     l : LIST
+    #         [radiany] - długośc geodezyjna.
+    #     h : LIST
+    #         [metry] - wysokość elipsoidalna
+    #     """
         
-        f = []
-        l = []
-        h = []
+    #     f = []
+    #     l = []
+    #     h = []
 
-        for X, Y, Z in zip(X_list, Y_list, Z_list):
-            p = np.sqrt(X**2 + Y**2)
-            f = np.arctan(Z / (p * (1 - self.ee)))
+    #     for X, Y, Z in zip(X_list, Y_list, Z_list):
+    #         p = np.sqrt(X**2 + Y**2)
+    #         f = np.arctan(Z / (p * (1 - self.ee)))
          
-        while True: 
-             N = self.Np(f)
-             h = (p / np.cos(f)) - N
-             fs = f
-             f = np.arctan(Z / (p * (1 - self.ee * (N / (N + h)))))
+    #     while True: 
+    #          N = self.Np(f)
+    #          h = (p / np.cos(f)) - N
+    #          fs = f
+    #          f = np.arctan(Z / (p * (1 - self.ee * (N / (N + h)))))
              
-             if np.abs(fs - f) < (0.000001 / 206265):
-                 break
+    #          if np.abs(fs - f) < (0.000001 / 206265):
+    #              break
                  
-             l = np.arctan2(Y, X)
-             f.append(f)
-             l.append(l)
-             h.append(h)
+    #          l = np.arctan2(Y, X)
+    #          f.append(f)
+    #          l.append(l)
+    #          h.append(h)
 
-        return(f,l,h)
+    #     return(f,l,h)
+    
+    
+    
+    def xyz2flh(self,X, Y, Z): 
+        l = np.arctan2(Y, X)
+        p = np.sqrt(X**2 + Y**2)
+        f = np.arctan(Z / (p * (1 - self.ee)))
+        while True :
+            N = self.a/np.sqrt(1 - self.ee * np.sin(f)**2)
+            h = p / np.cos(f) - N
+            fs = f
+            f = np.arctan(Z / (p * (1 - (self.ee * (N / (N + h))))))
+            if np.abs(f - fs) < (0.000001/206265):
+                break
+        return(f, l, h)   
   
         
    
         
-    def flh2XYZ(self, f, l, h):
-        """ Funkcja zajmuje się transformacją współrzędnych geodezyjnych (fi, lambda, h) 
-        na współrzędne ortokartezjańskie (X,Y,Z)
-        Parameters 
-        ----------
-        f, l, h : LIST
-                    listy współrzędnych geodezyjnych, których elementy mają typ FLOAT
-                f - [radiany] - szerokość geodezyjna
-                l - [radiany] - długość geodezyjna
-                h - [metry] - wysokość elipsoidalna,
+    # def flh2XYZ(self, f, l, h):
+    #     """ Funkcja zajmuje się transformacją współrzędnych geodezyjnych (fi, lambda, h) 
+    #     na współrzędne ortokartezjańskie (X,Y,Z)
+    #     Parameters 
+    #     ----------
+    #     f, l, h : LIST
+    #                 listy współrzędnych geodezyjnych, których elementy mają typ FLOAT
+    #             f - [radiany] - szerokość geodezyjna
+    #             l - [radiany] - długość geodezyjna
+    #             h - [metry] - wysokość elipsoidalna,
         
                 
-        Returns
-        -------
-        X_list, Y_list, Z_list : LIST
-                    - listy współrzędnych w układzie ortokartezjańskim, których elementy są typu FLOAT
-        """
-        X_list = []
-        Y_list = []
-        Z_list = []
+    #     Returns
+    #     -------
+    #     X_list, Y_list, Z_list : LIST
+    #                 - listy współrzędnych w układzie ortokartezjańskim, których elementy są typu FLOAT
+    #     """
+    #     X_list = []
+    #     Y_list = []
+    #     Z_list = []
 
-        for f, l, h in zip(f, l, h):
-            N = self.Np(f)
-            X = (N + h) * np.cos(f) * np.cos(l)
-            Y = (N + h) * np.cos(f) * np.sin(l)
-            Z = (N * (1 - self.ee) + h) * np.sin(f)
-            X_list.append(X)
-            Y_list.append(Y)
-            Z_list.append(Z)
+    #     for f, l, h in zip(f, l, h):
+    #         N = self.Np(f)
+    #         X = (N + h) * np.cos(f) * np.cos(l)
+    #         Y = (N + h) * np.cos(f) * np.sin(l)
+    #         Z = (N * (1 - self.ee) + h) * np.sin(f)
+    #         X_list.append(X)
+    #         Y_list.append(Y)
+    #         Z_list.append(Z)
 
-        return(X_list, Y_list, Z_list)
+    #     return(X_list, Y_list, Z_list)
+    
+    def flh2xyz(self, f, l, h):
+        N = self.a/np.sqrt(1 - self.ee * np.sin(f)**2)
+        X = (N + h) * np.cos(f) * np.cos(l)
+        Y = (N + h) * np.cos(f) * np.sin(l)
+        Z = (N * (1-self.ee) + h) * np.sin(f)
+        return(X, Y, Z)
         
-    def macierzR(self,f,l):
-        """ Funkcja tworzy macierz R potrzebną do transformacji współrzędnych ortokartezjańskich  (X, Y, Z) do 
-        współrzędnych układu topocentrycznego NEU (North, East, Up).
-        Parameters
-        ----------
-        f, l : FLOAT
-        parametry to szerokość i długość geodezyjna [radiany]
+    # def macierzR(self,f,l):
+    #     """ Funkcja tworzy macierz R potrzebną do transformacji współrzędnych ortokartezjańskich  (X, Y, Z) do 
+    #     współrzędnych układu topocentrycznego NEU (North, East, Up).
+    #     Parameters
+    #     ----------
+    #     f, l : FLOAT
+    #     parametry to szerokość i długość geodezyjna [radiany]
         
-        Returns
-        -------
-        R : np.ndarray
-                R jest macierzą dwuwymiarową, istotną w transformacji współrzędnych z układu ortokartezjańskiego (X, Y, Z) do układu
-                topocentrycznego NEU (North, East, Up)
-        """
+    #     Returns
+    #     -------
+    #     R : np.ndarray
+    #             R jest macierzą dwuwymiarową, istotną w transformacji współrzędnych z układu ortokartezjańskiego (X, Y, Z) do układu
+    #             topocentrycznego NEU (North, East, Up)
+    #     """
+        
+    #     R = np.array([[-np.sin(f)*np.cos(l), -np.sin(l), np.cos(f)*np.cos(l)],
+    #                        [-np.sin(f)*np.sin(l), np.cos(l), np.cos(f)*np.sin(l)],
+    #                        [np.cos(f),          0,     np.sin(f)]])
+    #     return(R)
+        
+    
+    
+    # def XYZ2neu(self, X_list, Y_list, Z_list, x0, y0, z0):
+    #     """ Funcja transformuje współrzędne ortokartezjańskie (X,Y,Z) do układu NEU (North, East,Up ), wykorzystując 
+    #     do tego celu macierz R, która umożliwia transformację współrzędnych
+    #     Parameters 
+    #     ----------
+    #     X_list, Y_list, Z_list : LIST
+    #                              listy współrzędnych ortokartezjańskich punktów
+    #     x0, y0, z0 : FLOAT
+    #                     współrzędne ostokartezjańskie punktu odniesienia
+        
+    #     Returns
+    #     -------
+    #     wynikiNEU : LIST
+    #                 listy wektorów współrzędnych przekształconych do układu NEU
+    #     """
+    
+    #     wynikiNEU= []
+    #     for X, Y, Z in zip(X_list, Y_list, Z_list):
+    #      dX = np.array([X - x0, Y - y0, Z - z0])
+    #      R = macierzR(f, l) 
+    #      dx = np.dot(np.transpose(R), dX)
+    #      wynikiNEU.append(dx.tolist())
+    #     return(wynikiNEU)
+    
+    def xyz2neu(self, X, Y, Z, x_0, y_0, z_0):
+        f, l, _ = [radians(coord) for coord in self.xyz2plh(X, Y, Z)]
         
         R = np.array([[-np.sin(f)*np.cos(l), -np.sin(l), np.cos(f)*np.cos(l)],
                            [-np.sin(f)*np.sin(l), np.cos(l), np.cos(f)*np.sin(l)],
                            [np.cos(f),          0,     np.sin(f)]])
-        return(R)
         
-    
-    
-    def XYZ2neu(self, X_list, Y_list, Z_list, x0, y0, z0):
-        """ Funcja transformuje współrzędne ortokartezjańskie (X,Y,Z) do układu NEU (North, East,Up ), wykorzystując 
-        do tego celu macierz R, która umożliwia transformację współrzędnych
-        Parameters 
-        ----------
-        X_list, Y_list, Z_list : LIST
-                                 listy współrzędnych ortokartezjańskich punktów
-        x0, y0, z0 : FLOAT
-                        współrzędne ostokartezjańskie punktu odniesienia
-        
-        Returns
-        -------
-        wynikiNEU : LIST
-                    listy wektorów współrzędnych przekształconych do układu NEU
-        """
-    
-        wynikiNEU= []
-        for X, Y, Z in zip(X_list, Y_list, Z_list):
-         dX = np.array([X - x0, Y - y0, Z - z0])
-         R = macierzR(f, l) 
-         dx = np.dot(np.transpose(R), dX)
-         wynikiNEU.append(dx.tolist())
-        return(wynikiNEU)
+        xyz_t = np.array([[X-x_0],
+                       [Y-y_0],
+                       [Z-z_0]])
+        dx = R.T @ xyz_t
+        n = dx[0]
+        e = dx[1]
+        up = dx[2]
+        return n,e,up
 
     
     def sigma(self, f):
@@ -196,61 +234,99 @@ class Transformacje:
         return(sigma)
     
     
+    
+    
     def fl22000(self, f, l):
-        """  
-        Funkcja ma przekształca współrzędne geodezyjne (fi, lambda) na współrzędne w układzie PL2000 (X2000, Y2000), funkcja wykorzystuje
-        wartosć sigma do transformacji współrzędnych
-        Parameters
-        ----------
-        f : FLOAT
-                szerokosć geodezyjna, wartosć podawana w radianach
-        l : FLOAT
-                dlugosc geodezyjna, wartosc podawana w radianach
+     m0 = 0.999923
+     l0 = 0 
+     strefa = 0
+     if l >= 13.5 and l < 16.5:
+         l0 = 15 * np.pi / 180
+         nr = 5
+     elif l >= 16.5 and l < 19.5:
+         l0 = 18 * np.pi / 180
+         nr = 6
+     elif l >= 19.5 and l < 22.5:
+         l0 = 21 * np.pi / 180
+         nr = 7
+     elif l >= 22.5 and l < 25.5:
+         l0 = 24 * np.pi / 180
+         nr = 8
+     else:
+         l0 = None
+         nr = None
+         
+     e2prim = (self.a**2 - self.b**2) / self.b**2
+     dl = l - l0
+     t = np.tan(f)
+     n = np.sqrt(e2prim * (np.cos(f))**2)
+     N = self.Np(f)
+     Sigma = self.sigma(f)
+    
+     XGK = Sigma + ((dl**2)/2) * N * np.sin(f)*np.cos(f) * (1 + ((dl**2)/12)*(np.cos(f))**2 * (5 - (t**2) + 9*(n**2) + 4*(n**4)) + ((dl**4)/360)*(np.cos(f)**4) * (61 - 58*(t**2) + (t**4) + 270*(n**2) - 330*(n**2)*(t**2)))
+     YGK = (dl*N* np.cos(f)) * (1 + (((dl)**2/6)*(np.cos(f))**2) * (1 - (t**2) + (n**2)) + ((dl**4)/120)*(np.cos(f)**4) * (5 - 18*(t**2) + (t**4) + 14*(n**2) - 58*(n**2)*(t**2)))
+                             
+     X2000 = XGK * m0
+     Y2000 = YGK * m0 + strefa*1000000 + 500000
+     return(X2000, Y2000)
+    
+    
+    # def fl22000(self, f, l):
+    #     """  
+    #     Funkcja ma przekształca współrzędne geodezyjne (fi, lambda) na współrzędne w układzie PL2000 (X2000, Y2000), funkcja wykorzystuje
+    #     wartosć sigma do transformacji współrzędnych
+    #     Parameters
+    #     ----------
+    #     f : FLOAT
+    #             szerokosć geodezyjna, wartosć podawana w radianach
+    #     l : FLOAT
+    #             dlugosc geodezyjna, wartosc podawana w radianach
                 
-        Returns
-        -------
-        wsp2000 : LIST
-                lista par współrzędnych otrzymanych w układzie PL2000 (X2000, Y2000), elementy listy są formatu FLOAT,
-                jednostką zwróconych wartosci są metry
+    #     Returns
+    #     -------
+    #     wsp2000 : LIST
+    #             lista par współrzędnych otrzymanych w układzie PL2000 (X2000, Y2000), elementy listy są formatu FLOAT,
+    #             jednostką zwróconych wartosci są metry
         
-        """
-        m0 = 0.999923
-        wyniki2000 = []
+    #     """
+    #     m0 = 0.999923
+
             
-        for f, l in zip(f,l):
-                l0 = 0 
-                strefa = 0
-                if l >= 13.5 and l < 16.5:
-                    l0 = 15 * np.pi / 180
-                    nr = 5
-                elif l >= 16.5 and l < 19.5:
-                    l0 = 18 * np.pi / 180
-                    nr = 6
-                elif l >= 19.5 and l < 22.5:
-                    l0 = 21 * np.pi / 180
-                    nr = 7
-                elif l >= 22.5 and l < 25.5:
-                    l0 = 24 * np.pi / 180
-                    nr = 8
-                else:
-                    l0 = None
-                    nr = None
-                    continue
+    #     for (f, l:
+    #             l0 = 0 
+    #             strefa = 0
+    #             if l >= 13.5 and l < 16.5:
+    #                 l0 = 15 * np.pi / 180
+    #                 nr = 5
+    #             elif l >= 16.5 and l < 19.5:
+    #                 l0 = 18 * np.pi / 180
+    #                 nr = 6
+    #             elif l >= 19.5 and l < 22.5:
+    #                 l0 = 21 * np.pi / 180
+    #                 nr = 7
+    #             elif l >= 22.5 and l < 25.5:
+    #                 l0 = 24 * np.pi / 180
+    #                 nr = 8
+    #             else:
+    #                 l0 = None
+    #                 nr = None
+    #                 continue
                              
-                e2prim = (self.a**2 - self.b**2) / self.b**2
-                dl = l - l0
-                t = np.tan(f)
-                n = np.sqrt(e2prim * (np.cos(f))**2)
-                N = self.Np(f)
-                Sigma = self.sigma(f)
+    #             e2prim = (self.a**2 - self.b**2) / self.b**2
+    #             dl = l - l0
+    #             t = np.tan(f)
+    #             n = np.sqrt(e2prim * (np.cos(f))**2)
+    #             N = self.Np(f)
+    #             Sigma = self.sigma(f)
                             
-                XGK = Sigma + ((dl**2)/2) * N * np.sin(f)*np.cos(f) * ( 1+ ((dl**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(n**2) + 4*(n**4)     )  + ((dl**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(n**2) - 330*(n**2)*(t**2))  )
-                YGK = (dl*N* np.cos(f)) * (1+(((dl)**2/6)*(np.cos(f))**2) *(1-(t**2)+(n**2))+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(n**2)-58*(n**2)*(t**2)) )
+    #             XGK = Sigma + ((dl**2)/2) * N * np.sin(f)*np.cos(f) * ( 1+ ((dl**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(n**2) + 4*(n**4)     )  + ((dl**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(n**2) - 330*(n**2)*(t**2))  )
+    #             YGK = (dl*N* np.cos(f)) * (1+(((dl)**2/6)*(np.cos(f))**2) *(1-(t**2)+(n**2))+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(n**2)-58*(n**2)*(t**2)) )
                              
-                X2000 = XGK * m0
-                Y2000 = YGK * m0 + strefa*1000000 + 500000
-                wsp2000.append([X2000, Y2000])
-                return(wyniki2000) 
+    #             X2000 = XGK * m0
+    #             Y2000 = YGK * m0 + strefa*1000000 + 500000
+    #             return(X2000, Y2000) 
+            
+    
 
     def fl21992(self, f, l):
         """ 
@@ -271,23 +347,23 @@ class Transformacje:
         """
         l0 = (19 * np.pi)/180
         m0 = 0.9993
-        wyniki1992 = []
-        for f,l in zip(f,l):
-            e2prim = (self.a**2 - self.b**2) / self.b**2   
-            dl = l - l0
-            t = np.tan(f)
-            n = np.sqrt(e2prim * (np.cos(f))**2)
-            N = self.Np(f)
-            Sigma = self.sigma(f)
+        
+        
+        e2prim = (self.a**2 - self.b**2) / self.b**2   
+        dl = l - l0
+        t = np.tan(f)
+        n = np.sqrt(e2prim * (np.cos(f))**2)
+        N = self.Np(f)
+        Sigma = self.sigma(f)
                  
-            XGK = Sigma + ((dl**2)/2)*N*np.sin(f)*np.cos(f) * ( 1+ ((dl**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(n**2) + 4*(n**4) ) + ((dl**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(n**2) - 330*(n**2)*(t**2))  )
-            YGK = (dl*N* np.cos(f)) * (1+(((dl)**2/6)*(np.cos(f))**2) *(1-(t**2)+(n**2))+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(n**2)-58*(n**2)*(t**2)) )
+        XGK = Sigma + ((dl**2)/2)*N*np.sin(f)*np.cos(f) * ( 1+ ((dl**2)/12)*(np.cos(f))**2 * ( 5 - (t**2)+9*(n**2) + 4*(n**4) ) + ((dl**4)/360)*(np.cos(f)**4) * (61-58*(t**2)+(t**4) + 270*(n**2) - 330*(n**2)*(t**2))  )
+        YGK = (dl*N* np.cos(f)) * (1+(((dl)**2/6)*(np.cos(f))**2) *(1-(t**2)+(n**2))+((dl**4)/120)*(np.cos(f)**4)*(5-18*(t**2)+(t**4)+14*(n**2)-58*(n**2)*(t**2)) )
             
-            X1992 = XGK * m0 - 5300000
-            Y1992 = YGK * m0 + 500000
-            wsp1992.append([X1992, Y1992]) 
+        X1992 = XGK * m0 - 5300000
+        Y1992 = YGK * m0 + 500000
             
-        return(wyniki1992)
+            
+        return(X1992, Y1992)
   
  
    
@@ -295,109 +371,135 @@ class Transformacje:
   
         
         
+        
+
 if __name__ == "__main__":
-    
     # utworzenie obiektu
-    model = sys.argv
-    try:
-        model = sys.argv[3]
-    except IndexError:
-      print("model")
- 
-    geo = Transformacje(model = model)
+    geo = Transformacje(model = "wgs84")
+    print(sys.argv)
     # dane XYZ geocentryczne
     X = 3664940.500; Y = 1409153.590; Z = 5009571.170
-    phi, lam, h = geo.xyz2plh(X, Y, Z)
-    print(phi, lam, h)
-    # phi, lam, h = geo.xyz2plh2(X, Y, Z)
-    # print(phi, lam, h)        
+    f, l, h = geo.xyz2flh(X, Y, Z)
+    print(f, l, h)
+    X_new, Y_new, Z_new = geo.flh2xyz(f, l, h)
+    print(X_new, Y_new, Z_new)
 
-def wczytaj_plik_wspolrzednych(nazwa_pliku):
-    X = []
-    Y = []
-    Z = []
-    try:
-        with open(nazwa_pliku, 'r') as plik:
-            linie = plik.readlines()
-            for linia in linie:
-                if not linia.startswith('#') and not linia.startswith('X'):  
-                    kolumny = linia.strip().split(',')  
-                    if len(kolumny) >= 3:
-                        try:
-                            x = float(kolumny[0])  
-                            y = float(kolumny[1])  
-                            z = float(kolumny[2])  
-                            X.append(x)
-                            Y.append(y)
-                            Z.append(z)
-                        except ValueError:
-                            print("Nieprawidłowe dane w linii:", linia)
-    except FileNotFoundError:
-        print("Plik", nazwa_pliku, "nie został znaleziony.")
-    return X, Y, Z
-
-
-nazwa_pliku = 'wsp_inp.txt'  
-X, Y, Z = wczytaj_plik_wspolrzednych(nazwa_pliku)
-
-
-
-
-def zapisz_do_pliku_txt(wyniki, nazwa_pliku):
-    try:
-        with open(nazwa_pliku, 'w') as plik:
-            for wiersz in wyniki:
-                plik.write(str(wiersz) + '\n')
-        print("Wyniki zostały zapisane do pliku", nazwa_pliku)
-    except IOError:
-        print("Błąd podczas zapisywania do pliku", nazwa_pliku)
-
-wyniki = [f, l, h, X, Y, Z, dx, x2000, y2000, x92, y92]
-nazwa_pliku = "WYNIKI.txt"
-zapisz_do_pliku_txt(wyniki, nazwa_pliku)
-    # if '--plh2xyz' in sys.argv:
-    #     x, y,z = flhxyz(f, l, h)
+input_file_path = sys.argv[-1]
     
-    
+if '--xyz2flh' in sys.argv and '--flh2xyz' in sys.argv:
+    print('mozezz podac tylko jedna flage')
+elif'--xyz2flh' in sys.argv:
+    with open(input_file_path, 'r') as f:
+            lines = f.readlines()
+            lines = lines[4:]
+            # coords_neup = []   
+            coords_flh = []
+            for line in lines:
+                line = line.strip()
+                x_str, y_str, z_str = line.split(',')
+                x, y,z = (float(x_str), float(y_str), float(z_str))
+                f, l, h = geo.xyz2flh(x,y,z)
+                h = '{:.3f}'.format(h)
+                coords_flh.append([f,l,h])
 
-model = {'WGS84': [6378137.000, 6356752.31424518], 'GRS80': [6378137.000, 6356752.31414036], 'KRASOWSKI': [6378245.000, 6356863.019]}
-transformacje = {'XYZ2flh': 'XYZ2flh', 'flh2XYZ': 'flh2XYZ','XYZ2neu': 'XYZ2neu', 'fl22000': 'fl22000', 'fl21992': 'fl21992'}
+                 
+    with open('results_xyz2flh.txt', 'w') as f:
+            f.write('f, l, h \n')
+            for coords in coords_flh:    
+                coords_flh_line = ','.join([str(coord) for coord in coords])
+                f.write(coords_flh_line + '\n')
 
-try:
-    while True:
-        if len(sys.argv) <= 1:
-            args_model = input('Podaj nazwe elipsoidy: ')
-            args_dane = input('Wklej sciezke do pliku txt z danymi: ')
-            args_transformacja = input('Podaj nazwę transformacji, którą chcesz wykonać: ')
-        else:
-            args_model = sys.argv[1]
-            args_dane = sys.argv[2]
-            args_transformacja = sys.argv[3]
+if '--flh2xyz' in sys.argv and '--xyz2flh' in sys.argv:
+    print('mozezz podac tylko jedna flage')
+elif'--flh2xyz' in sys.argv:
+    with open(input_file_path, 'r') as f:
+            lines = f.readlines()
+            lines = lines[1:]
+            # coords_neup = []   
+            coords_xyz = []
+            for line in lines:
+                line = line.strip()
+                f_str, l_str, h_str = line.split(',')
+                f,l,h = (float(f_str), float(l_str))
+                x,y,z = geo.flh2xyz(f, l, h)
+                h = '{:.3f}'.format(h)
+                coords_xyz.append([x,y,z])
 
-        obiekt = Transformacje(model[args_model.upper()])
-        wyniki = obiekt.wczytywanie(args_dane, Transformacje[args_transformacja.upper()])
+                 
+    with open('results_flh2xyz.txt', 'w') as f:
+            f.write('x, y, z \n')
+            for coords in coords_flh:    
+                coords_flh_line = ','.join([str(coord) for coord in coords])
+                f.write(coords_xyz_line + '\n')
+
+
+if '--fl22000' in sys.argv:
+    print('mozezz podac tylko jedna flage')
+elif'--flh22000' in sys.argv:
+    with open(input_file_path, 'r') as f:
+            lines = f.readlines()
+            lines = lines[1:]
+            # coords_neup = []   
+            coords_x2000y2000 = []
+            for line in lines:
+                line = line.strip()
+                f_str, l_str = line.split(',')
+                f,l = (float(f_str), float(l_str))
+                x2000,y2000 = geo.flh22000(f, l)
+                h = '{:.3f}'.format(h)
+                coords_xyz.append([x2000,y2000])
+
+                 
+    with open('results_flh22000.txt', 'w') as f:
+            f.write('x2000, y2000 \n')
+            for coords in coords_flh:    
+                coords_fl_line = ','.join([str(coord) for coord in coords])
+                f.write(coords_x2000y2000_line + '\n')
+
+
+if '--fl21992' in sys.argv:
+    print('mozezz podac tylko jedna flage')
+elif'--flh21992' in sys.argv:
+    with open(input_file_path, 'r') as f:
+            lines = f.readlines()
+            lines = lines[1:]
+            # coords_neup = []   
+            coords_x1992y1992 = []
+            for line in lines:
+                line = line.strip()
+                f_str, l_str = line.split(',')
+                f,l = (float(f_str), float(l_str))
+                x1992,y1992 = geo.flh21992(f, l)
+                h = '{:.3f}'.format(h)
+                coords_xyz.append([x1992,y1992])
+
+                 
+    with open('results_flh21992.txt', 'w') as f:
+            f.write('x1992, y1992 \n')
+            for coords in coords_flh:    
+                coords_fl_line = ','.join([str(coord) for coord in coords])
+                f.write(coords_x1992y1992_line + '\n') 
+
+elif'--xyz2neu' in sys.argv:
+    with open(input_file_path, 'r') as f:
+        lines = lines[4:]
+        coords_neu = []
+        for line in lines:
+            line = line.strip()
+            x_str, y_str, z_str = line.split(',')
+            x, y,z = (float(x_str), float(y_str), float(z_str))
+            x_0,y_0,z_0 = [float(coord) for coord in sys.argv[-4:-1]]
+            n,e,up = geo.xyz2neup(x,y,z,x_0,y_0,z_0)
+            coords_neup.append([n,e,up])
+            
+    with open('results_xyz2neu.txt', 'w') as f:
+            f.write('n[m],e[m], u[m] \n')
+            for coords in coords_neu:    
+                coords_neu_line = ','.join([str(coord) for coord in coords])
+                f.write(coords_neu_line + '\n') 
+
         
-        print('Plik z wynikami został utworzony.')
-        
-        wybor = input('Jezeli chcesz wykonac kolejna transformacje wpisz TAK, jeśli chcesz zakonczyc KONIEC: ').upper()
-        if wybor != 'TAK':
-            break
 
-except FileNotFoundError:
-    print('Podany plik nie istnieje.')
-except KeyError:
-    print('Zła podana elipsoida lub transformacja.')
-except IndexError:
-    print('Zły format danych w pliku.')
-except ValueError:
-    print('Zły format danych w pliku.')
-finally:
-    print('Koniec programu') 
-  
-
-
-        
-        
         
     
     
