@@ -1,7 +1,7 @@
 from math import *
 import numpy as np
 from argparse import *
-import sys 
+from sys.argv import *
 
 o = object()
 
@@ -343,56 +343,56 @@ X, Y, Z = wczytaj_plik_wspolrzednych(nazwa_pliku)
 
 
 
-# def zapisz_do_pliku_txt(wyniki, nazwa_pliku):
-#     try:
-#         with open(nazwa_pliku, 'w') as plik:
-#             for wiersz in wyniki:
-#                 plik.write(str(wiersz) + '\n')
-#         print("Wyniki zostały zapisane do pliku", nazwa_pliku)
-#     except IOError:
-#         print("Błąd podczas zapisywania do pliku", nazwa_pliku)
+def zapisz_do_pliku_txt(wyniki, nazwa_pliku):
+    try:
+        with open(nazwa_pliku, 'w') as plik:
+            for wiersz in wyniki:
+                plik.write(str(wiersz) + '\n')
+        print("Wyniki zostały zapisane do pliku", nazwa_pliku)
+    except IOError:
+        print("Błąd podczas zapisywania do pliku", nazwa_pliku)
 
-# wyniki = [f, l, h, X, Y, Z, dx, x2000, y2000, x92, y92]
-# nazwa_pliku = "WYNIKI.txt"
-# zapisz_do_pliku_txt(wyniki, nazwa_pliku)
-#     # if '--plh2xyz' in sys.argv:
-#     #     x, y,z = flhxyz(f, l, h)
+wyniki = [f, l, h, X, Y, Z, dx, x2000, y2000, x92, y92]
+nazwa_pliku = "WYNIKI.txt"
+zapisz_do_pliku_txt(wyniki, nazwa_pliku)
+    # if '--plh2xyz' in sys.argv:
+    #     x, y,z = flhxyz(f, l, h)
     
     
 
-# model = {'WGS84': [6378137.000, 6356752.31424518], 'GRS80': [6378137.000, 6356752.31414036], 'KRASOWSKI': [6378245.000, 6356863.019]}
-# transformacje = {'XYZ2flh': 'XYZ2flh', 'flh2XYZ': 'flh2XYZ','XYZ2neu': 'XYZ2neu', 'fl22000': 'fl22000', 'fl21992': 'fl21992'}
+model = {'WGS84': [6378137.000, 6356752.31424518], 'GRS80': [6378137.000, 6356752.31414036], 'KRASOWSKI': [6378245.000, 6356863.019]}
+transformacje = {'XYZ2flh': 'XYZ2flh', 'flh2XYZ': 'flh2XYZ','XYZ2neu': 'XYZ2neu', 'fl22000': 'fl22000', 'fl21992': 'fl21992'}
 
-# try:
-#     while True:
-#         if len(sys.argv) <= 1:
-#             args_model = input('Podaj nazwe elipsoidy: ')
-#             args_dane = input('Wklej sciezke do pliku txt z danymi: ')
-#             args_transformacja = input('Podaj nazwę transformacji, którą chcesz wykonać: ')
-#         else:
-#             args_model = sys.argv[1]
-#             args_dane = sys.argv[2]
-#             args_transformacja = sys.argv[3]
+try:
+    while True:
+        if len(sys.argv) <= 1:
+            args_model = input('Podaj nazwe elipsoidy: ')
+            args_dane = input('Wklej sciezke do pliku txt z danymi: ')
+            args_transformacja = input('Podaj nazwę transformacji, którą chcesz wykonać: ')
+        else:
+            args_model = sys.argv[1]
+            args_dane = sys.argv[2]
+            args_transformacja = sys.argv[3]
 
-#         obiekt = Transformacje(model[args_model.upper()])
-#         wyniki = obiekt.wczytywanie(args_dane, Transformacje[args_transformacja.upper()])
+        obiekt = Transformacje(model[args_model.upper()])
+        wyniki = obiekt.wczytywanie(args_dane, Transformacje[args_transformacja.upper()])
         
-#         print('Plik z wynikami został utworzony.')
+        print('Plik z wynikami został utworzony.')
         
-#         wybor = input('Jezeli chcesz wykonac kolejna transformacje wpisz TAK, jeśli chcesz zakonczyc KONIEC: ').upper()
-#         if wybor != 'TAK':
-#             break
+        wybor = input('Jezeli chcesz wykonac kolejna transformacje wpisz TAK, jeśli chcesz zakonczyc KONIEC: ').upper()
+        if wybor != 'TAK':
+            break
 
-# except FileNotFoundError:
-#     print('Podany plik nie istnieje.')
-# except KeyError:
-#     print('Zła podana elipsoida lub transformacja.')
-# except IndexError:
-#     print('Zły format danych w pliku.')
-# except ValueError:
-#     print('Zły format danych w pliku.')
-# finally:
-#     print('Koniec programu') 
+except FileNotFoundError:
+    print('Podany plik nie istnieje.')
+except KeyError:
+    print('Zła podana elipsoida lub transformacja.')
+except IndexError:
+    print('Zły format danych w pliku.')
+except ValueError:
+    print('Zły format danych w pliku.')
+finally:
+    print('Koniec programu') 
   
 
 
