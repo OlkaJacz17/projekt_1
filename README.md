@@ -15,9 +15,9 @@ _Transformacja współrzędnych ortokartezjańskich na geodezyjne_ (szerokość,
 
 Program przyjmuje współrzędne ortokartezjańskie i przy użyciu algorytmu Hirvonena przekształca je na współrzędne geodezyjne, gdzie:
 
-B - szerokość geodezyjna, program zwraca tą wartość w radianach,
+B - szerokość geodezyjna, program zwraca tą wartość w stopniach dziesiętnych,
 
-L - długość geodezyjna, również zwracana w radianach 
+L - długość geodezyjna, również zwracana w stopniach dziesiętnych 
 
 H - wysokość, odległość od elipsoidy tą wartość otrzymujemy w metrach.
 
@@ -28,7 +28,7 @@ __BLH ==> XYZ__
 
 _Transformacja odwrotna, przekształca współrzędne geodezyjne na ortokartezjańskie_:
 
-Do programu wprowadzamy zmienne B, L podawane w radianach oraz H w metrach, w wyniku otrzymujemy współrzędne X, Y, Z w metrach.
+Do programu wprowadzamy zmienne B, L podawane w stopniach dziesiętnych oraz H w metrach, w wyniku otrzymujemy współrzędne X, Y, Z w metrach.
 
 ___________________________________________________________
 
@@ -60,7 +60,28 @@ Do poprawnego działania programu należy skorzystać z pythona w wersji 3.6 lub
 
 # KORZYSTANIE Z PROGRAMU
 
-_Dane wejściowe_ - dane wprowadzane do programu powinny mieć format pliku .txt 
+_Dane wejściowe_ - dane wprowadzane do programu powinny mieć format pliku tekstowego, w którym podane będą współrzędne w odpowiednich jednostakch zależnie od typu transformacji, który chcemy wykonać
 
 
-_Rezulat_ - program zwraca wartości w postaci pliku
+_Rezulat_ - program zwraca wartości przeprowadzonych transformacji w postaci pliku tekstowego do folderu, w którym znajduje się nasz plik wejściowy
+________________________________________________________________
+
+_Wywołanie programu_ - do poprawnego zadziałania programu potrzebujemy sklonować to repozytorium na swoje urządzenie oraz uruchomić CMD  w skolonwanym folderze.
+
+
+1. Aby program zadziałał poprawnie musimy użyć komendy " __python kod.py__" ,
+2. Program poprosi nas o podanie nazwy elipsoidy, zatem wybieramy jedną z trzech dostępnych < __wgs84_,  __GRS80_, __elipsoidę Krasowskiego_ > wpisując odpowiednio < __wgs84__, __grs80__, __krasowskiego__ >
+3. Następnie wprowadzamy nazwę transformacji jaką chcemy wykonać (musimy to zrobić przy pomocy flagi), więc należy wpisać jedną z podanych :
+   
+   " --xyz2flh"
+   
+   "--flh2xyz"
+   
+   "--fl22000"
+   
+   "--fl21992"
+   
+   "--xyz2neu" po wpisaniu tej transformacji musimy podać wartości współrzędnych (x_0, y_0, z_0) punktu odniesienia
+5. Ostatnim elementem naszej komendy jest podanie nazwy pliku z danymi wejściowymi
+   
+
