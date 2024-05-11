@@ -72,6 +72,7 @@ _Wywołanie programu_ - do poprawnego zadziałania programu potrzebujemy sklonow
 1. Aby program zadziałał poprawnie musimy użyć komendy " __python kod.py__" ,
 2. Program poprosi nas o podanie nazwy elipsoidy, zatem wybieramy jedną z trzech dostępnych < __wgs84_,  __GRS80_, __elipsoidę Krasowskiego_ > wpisując odpowiednio < __wgs84__, __grs80__, __krasowskiego__ >
 3. Następnie wprowadzamy nazwę transformacji jaką chcemy wykonać (musimy to zrobić przy pomocy flagi), więc należy wpisać jedną z podanych :
+   
    " --xyz2flh"
    
    "--flh2xyz"
