@@ -73,10 +73,14 @@ _Wywołanie programu_ - do poprawnego zadziałania programu potrzebujemy sklonow
 2. Program poprosi nas o podanie nazwy elipsoidy, zatem wybieramy jedną z trzech dostępnych < __wgs84_,  __GRS80_, __elipsoidę Krasowskiego_ > wpisując odpowiednio < __wgs84__, __grs80__, __krasowskiego__ >
 3. Następnie wprowadzamy nazwę transformacji jaką chcemy wykonać (musimy to zrobić przy pomocy flagi), więc należy wpisać jedną z podanych :
    " --xyz2flh"
+   
    "--flh2xyz"
+   
    "--fl22000"
+   
    "--fl21992"
+   
    "--xyz2neu" po wpisaniu tej transformacji musimy podać wartości współrzędnych (x_0, y_0, z_0) punktu odniesienia
-4. Ostatnim elementem naszej komendy jest podanie nazwy pliku z danymi wejściowymi
+5. Ostatnim elementem naszej komendy jest podanie nazwy pliku z danymi wejściowymi
    
 
