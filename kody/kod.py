@@ -32,6 +32,14 @@ class Transformacje:
         self.flat = (self.a - self.b) / self.a
         self.ee = (2 * self.flat - self.flat ** 2)
         
+        
+        try: 
+            
+            model = sys.argv[3]
+        except IndexError:
+            print("podaj elipsoide")
+            
+            
     def Np(self, f):
         """ Funkcja oblicza promień krzywiznowy 
         Parameters 
@@ -268,11 +276,14 @@ if __name__ == "__main__":
    # print(f, l, h)
     X_new, Y_new, Z_new = geo.flh2xyz(f, l, h)
     #print(X_new, Y_new, Z_new)
+    
+
+
 
 input_file_path = sys.argv[-1]
 
     
-if '--xyz2flh' in sys.argv and '--flh2xyz' in sys.argv:
+if '--xyz2flh' in sys.argv and '--flh2xyz' and '--fl22000' and '--fl21992' and 'xyz2neu' in sys.argv:
     print('mozezz podac tylko jedna flage')
 elif'--xyz2flh' in sys.argv:
     with open(input_file_path, 'r') as f:
@@ -295,8 +306,7 @@ elif'--xyz2flh' in sys.argv:
                 coords_flh_line = ','.join([str(coord) for coord in coords])
                 f.write(coords_flh_line + '\n')
 
-if '--flh2xyz' in sys.argv and '--xyz2flh' in sys.argv:
-    print('mozezz podac tylko jedna flage')
+
 elif'--flh2xyz' in sys.argv:
     with open(input_file_path, 'r') as f:
             lines = f.readlines()
@@ -319,9 +329,8 @@ elif'--flh2xyz' in sys.argv:
                 f.write(coords_xyz_line + '\n')
 
 
-if '--fl22000' in sys.argv:
-    print('mozezz podac tylko jedna flage')
-elif'--flh22000' in sys.argv:
+
+elif'--fl22000' in sys.argv:
     with open(input_file_path, 'r') as f:
             lines = f.readlines()
             lines = lines[1:]
@@ -343,9 +352,8 @@ elif'--flh22000' in sys.argv:
                 f.write(coords_X2000Y2000_line + '\n')
 
 
-if '--fl21992' in sys.argv:
-    print('mozezz podac tylko jedna flage')
-elif'--flh21992' in sys.argv:
+
+elif'--fl21992' in sys.argv:
     with open(input_file_path, 'r') as f:
             lines = f.readlines()
             lines = lines[1:]
