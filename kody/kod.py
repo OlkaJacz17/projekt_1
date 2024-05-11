@@ -45,7 +45,7 @@ class Transformacje:
         Parameters 
         ----------
         f : FLOAT
-                szerokosć geograficzna [radiany]
+                szerokosć geograficzna [stopnie dziesiętne]
         
         Returns
         -------
@@ -69,9 +69,9 @@ class Transformacje:
         Returns
         -------
         f : FLOAT
-            [radiany] - szerokość geodezyjna
+            [sstopnie dziesiętne] - szerokość geodezyjna
         l : FLOAT
-            [radiany] - długośc geodezyjna.
+            [stopnie dziesiętne] - długośc geodezyjna.
         h : FLOAT
             [metry] - wysokość elipsoidalna
         """
@@ -110,8 +110,8 @@ class Transformacje:
         ----------
         f, l, h : FLOAT
                     współrzędne geodezyjne:
-                f - [radiany] - szerokość geodezyjna
-                l - [radiany] - długość geodezyjna
+                f - [stopnie dziesiętne] - szerokość geodezyjna
+                l - [stopnie dziesiętne] - długość geodezyjna
                 h - [metry] - wysokość elipsoidalna,
         
         Returns
@@ -173,7 +173,7 @@ class Transformacje:
         Parameters 
         ----------
         f : FLOAT
-                szerokosć geodezyjna podawana w radianach
+                szerokosć geodezyjna podawana w stopniach dziesiętnych
                 
         Returns 
         -------
@@ -197,9 +197,9 @@ class Transformacje:
      Parameters
      ----------
      f : FLOAT
-             szerokosć geodezyjna, wartosć podawana w radianach
+             szerokosć geodezyjna, wartosć podawana w stopniach dziesiętnych
      l : FLOAT
-             dlugosc geodezyjna, wartosc podawana w radianach
+             dlugosc geodezyjna, wartosc podawana w stopniach dziesiętnych
              
      Returns
      -------
@@ -253,9 +253,9 @@ class Transformacje:
         Parameters
         ----------
         f : FLOAT
-                szerokoć geodezyjna wyrażona w radianach
+                szerokoć geodezyjna wyrażona w stopniach dziesiętnych
         l : FLOAT 
-                długosć geodezyjna wyrażona w radianach
+                długosć geodezyjna wyrażona w stopniacch dziesiętnych
                 
         Returns
         -------
