@@ -126,7 +126,7 @@ class Transformacje:
 
         """
         
-        f, l, _ = [radians(coord) for coord in self.xyz2plh(X, Y, Z)]
+        f, l, _ = [radians(coord) for coord in self.xyz2flh(X, Y, Z)]
         
         R = np.array([[-np.sin(f)*np.cos(l), -np.sin(l), np.cos(f)*np.cos(l)],
                            [-np.sin(f)*np.sin(l), np.cos(l), np.cos(f)*np.sin(l)],
@@ -205,7 +205,7 @@ class Transformacje:
          nr = None
          
      e2prim = (self.a**2 - self.b**2) / self.b**2
-     dl = l - l0
+     dl = radians(l) - l0
      t = np.tan(f)
      n = np.sqrt(e2prim * (np.cos(f))**2)
      N = self.Np(f)
@@ -215,7 +215,7 @@ class Transformacje:
      YGK = (dl*N* np.cos(f)) * (1 + (((dl)**2/6)*(np.cos(f))**2) * (1 - (t**2) + (n**2)) + ((dl**4)/120)*(np.cos(f)**4) * (5 - 18*(t**2) + (t**4) + 14*(n**2) - 58*(n**2)*(t**2)))
                              
      X2000 = XGK * m0
-     Y2000 = YGK * m0 + strefa*1000000 + 500000
+     Y2000 = YGK * m0 + nr*1000000 + 500000
      return(X2000, Y2000)
 
  
@@ -243,7 +243,7 @@ class Transformacje:
         
         
         e2prim = (self.a**2 - self.b**2) / self.b**2   
-        dl = l - l0
+        dl = radians(l) - l0
         t = np.tan(f)
         n = np.sqrt(e2prim * (np.cos(f))**2)
         N = self.Np(f)
@@ -261,15 +261,16 @@ class Transformacje:
 if __name__ == "__main__":
     # utworzenie obiektu
     geo = Transformacje(model = "wgs84")
-    print(sys.argv)
+    #print(sys.argv)
     # dane XYZ geocentryczne
     X = 3664940.500; Y = 1409153.590; Z = 5009571.170
     f, l, h = geo.xyz2flh(X, Y, Z)
-    print(f, l, h)
+   # print(f, l, h)
     X_new, Y_new, Z_new = geo.flh2xyz(f, l, h)
-    print(X_new, Y_new, Z_new)
+    #print(X_new, Y_new, Z_new)
 
 input_file_path = sys.argv[-1]
+
     
 if '--xyz2flh' in sys.argv and '--flh2xyz' in sys.argv:
     print('mozezz podac tylko jedna flage')
@@ -305,7 +306,7 @@ elif'--flh2xyz' in sys.argv:
             for line in lines:
                 line = line.strip()
                 f_str, l_str, h_str = line.split(',')
-                f,l,h = (float(f_str), float(l_str))
+                f,l,h = (float(f_str), float(l_str), float(h_str))
                 x,y,z = geo.flh2xyz(f, l, h)
                 h = '{:.3f}'.format(h)
                 coords_xyz.append([x,y,z])
@@ -314,7 +315,7 @@ elif'--flh2xyz' in sys.argv:
     with open('results_flh2xyz.txt', 'w') as f:
             f.write('x, y, z \n')
             for coords in coords_flh:    
-                coords_flh_line = ','.join([str(coord) for coord in coords])
+                coords_xyz_line = ','.join([str(coord) for coord in coords])
                 f.write(coords_xyz_line + '\n')
 
 
@@ -325,21 +326,21 @@ elif'--flh22000' in sys.argv:
             lines = f.readlines()
             lines = lines[1:]
             # coords_neup = []   
-            coords_x2000y2000 = []
+            coords_X2000Y2000 = []
             for line in lines:
                 line = line.strip()
                 f_str, l_str = line.split(',')
                 f,l = (float(f_str), float(l_str))
-                x2000,y2000 = geo.flh22000(f, l)
+                X2000,Y2000 = geo.fl22000(f, l)
                 h = '{:.3f}'.format(h)
-                coords_xyz.append([x2000,y2000])
+                coords_X2000Y2000.append([X2000,Y2000])
 
                  
     with open('results_flh22000.txt', 'w') as f:
-            f.write('x2000, y2000 \n')
+            f.write('X2000, Y2000 \n')
             for coords in coords_flh:    
-                coords_fl_line = ','.join([str(coord) for coord in coords])
-                f.write(coords_x2000y2000_line + '\n')
+                coords_X2000Y2000_line = ','.join([str(coord) for coord in coords])
+                f.write(coords_X2000Y2000_line + '\n')
 
 
 if '--fl21992' in sys.argv:
@@ -348,25 +349,26 @@ elif'--flh21992' in sys.argv:
     with open(input_file_path, 'r') as f:
             lines = f.readlines()
             lines = lines[1:]
-            # coords_neup = []   
-            coords_x1992y1992 = []
+            # coords_neu = []   
+            coords_X1992Y1992 = []
             for line in lines:
                 line = line.strip()
                 f_str, l_str = line.split(',')
                 f,l = (float(f_str), float(l_str))
-                x1992,y1992 = geo.flh21992(f, l)
+                X1992,Y1992 = geo.fl21992(f, l)
                 h = '{:.3f}'.format(h)
-                coords_xyz.append([x1992,y1992])
+                coords_X1992Y1992.append([X1992,Y1992])
 
                  
-    with open('results_flh21992.txt', 'w') as f:
-            f.write('x1992, y1992 \n')
-            for coords in coords_flh:    
-                coords_fl_line = ','.join([str(coord) for coord in coords])
-                f.write(coords_x1992y1992_line + '\n') 
+    with open('results_fl21992.txt', 'w') as f:
+            f.write('X1992, Y1992 \n')
+            for coords in coords_fl:    
+                coords_X1992Y1992_line = ','.join([str(coord) for coord in coords])
+                f.write(coords_X1992Y1992_line + '\n') 
 
 elif'--xyz2neu' in sys.argv:
     with open(input_file_path, 'r') as f:
+        lines = f.readlines()
         lines = lines[4:]
         coords_neu = []
         for line in lines:
@@ -374,8 +376,8 @@ elif'--xyz2neu' in sys.argv:
             x_str, y_str, z_str = line.split(',')
             x, y,z = (float(x_str), float(y_str), float(z_str))
             x_0,y_0,z_0 = [float(coord) for coord in sys.argv[-4:-1]]
-            n,e,up = geo.xyz2neup(x,y,z,x_0,y_0,z_0)
-            coords_neup.append([n,e,up])
+            n,e,u = geo.xyz2neu(x,y,z,x_0,y_0,z_0)
+            coords_neu.append([n,e,u])
             
     with open('results_xyz2neu.txt', 'w') as f:
             f.write('n[m],e[m], u[m] \n')
