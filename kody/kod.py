@@ -57,7 +57,7 @@ class Transformacje:
         return(N)
         
   
-    def xyz2flh(self,X, Y, Z): 
+    def xyz2flh(self,X, Y, Z, output = 'dec_degree'): 
         """" Algorytm Hirvonena - algorytm transformacji współrzędnych ortokartezjańskich (x, y, z)
         na współrzędne geodezyjne długość szerokość i wysokość elipsoidalna (phi, lam, h). Jest to proces iteracyjny. 
         W wyniku 3-4-krotneej iteracji wyznaczenia wsp. phi można przeliczyć współrzędne z dokładnoscią ok 1 cm.     
@@ -75,17 +75,31 @@ class Transformacje:
         h : FLOAT
             [metry] - wysokość elipsoidalna
         """
-        l = np.arctan2(Y, X)
-        p = np.sqrt(X**2 + Y**2)
-        f = np.arctan(Z / (p * (1 - self.ee)))
-        while True :
-            N = self.a/np.sqrt(1 - self.ee * np.sin(f)**2)
-            h = p / np.cos(f) - N
-            fs = f
-            f = np.arctan(Z / (p * (1 - (self.ee * (N / (N + h))))))
-            if np.abs(f - fs) < (0.000001/206265):
-                break
-        return(f, l, h)   
+        p  = sqrt(X**2 + Y**2)           # promień
+        f_prev = atan(Z / (p * (1 - self.ee)))    # pierwsze przybliilizenie
+        f= 0
+        while abs(f_prev - f) > 0.000001/206265:    
+            f_prev = f
+            N = self.a / sqrt(1 - self.ee * sin(f_prev)**2)
+            h = p / cos(f_prev) - N
+            f = atan((Z/p) * (((1 - self.ee * N/(N + h))**(-1))))
+        l = atan(Y/X)
+        N = self.a / sqrt(1 - self.ee * (sin(f))**2);
+        h = p / cos(f) - N
+        h = np.round(h,decimals=3)
+        if output == "dec_degree":
+            f = degrees(f)
+            f = np.round(f,decimals=8)
+            l = degrees(l)
+            l = np.round(l,decimals=8)
+            return f, l ,h
+        elif output == "dms":
+            f = self.deg2dms(degrees(f))
+            l = self.deg2dms(degrees(l))
+            return f,l,h
+            #return f"{lat[0]:02d}:{lat[1]:02d}:{lat[2]:.2f}", f"{lon[0]:02d}:{lon[1]:02d}:{lon[2]:.2f}", f"{h:.3f}"
+        else:
+            raise NotImplementedError(f"{output} - output format not defined")  
   
 
     
@@ -105,6 +119,8 @@ class Transformacje:
         X, Y, Z : FLOAT
                     - współrzędne w układzie ortokartezjańskim, których wynik zwracany jest w metrach
         """
+        f = radians(f)
+        l = radians(l)
         N = self.a/np.sqrt(1 - self.ee * np.sin(f)**2)
         X = (N + h) * np.cos(f) * np.cos(l)
         Y = (N + h) * np.cos(f) * np.sin(l)
@@ -193,27 +209,30 @@ class Transformacje:
              współrzędna otrzymana w układzie PL2000, jednostką zwróconej wartosci są metry
      
      """
-     m0 = 0.999923
-     l0 = 0 
-     strefa = 0
+     
      if l >= 13.5 and l < 16.5:
-         l0 = 15 * np.pi / 180
+         l0 = 15 
          nr = 5
      elif l >= 16.5 and l < 19.5:
-         l0 = 18 * np.pi / 180
+         l0 = 18 
          nr = 6
      elif l >= 19.5 and l < 22.5:
-         l0 = 21 * np.pi / 180
+         l0 = 21 
          nr = 7
      elif l >= 22.5 and l < 25.5:
-         l0 = 24 * np.pi / 180
+         l0 = 24 
          nr = 8
      else:
          l0 = None
          nr = None
+      
+     l0 = radians(l0)
+     f = radians(f)
+     l = radians(l)
+     m0 = 0.999923
          
      e2prim = (self.a**2 - self.b**2) / self.b**2
-     dl = radians(l) - l0
+     dl = l - l0
      t = np.tan(f)
      n = np.sqrt(e2prim * (np.cos(f))**2)
      N = self.Np(f)
@@ -246,12 +265,14 @@ class Transformacje:
                 współrzędna w układzie PL1992, wyrażona w metrach
         
         """
+        f = radians(f)
+        l = radians(l)
         l0 = (19 * np.pi)/180
         m0 = 0.9993
         
         
         e2prim = (self.a**2 - self.b**2) / self.b**2   
-        dl = radians(l) - l0
+        dl = l - l0
         t = np.tan(f)
         n = np.sqrt(e2prim * (np.cos(f))**2)
         N = self.Np(f)
@@ -324,7 +345,7 @@ elif'--flh2xyz' in sys.argv:
                  
     with open('results_flh2xyz.txt', 'w') as f:
             f.write('x, y, z \n')
-            for coords in coords_flh:    
+            for coords in coords_xyz:    
                 coords_xyz_line = ','.join([str(coord) for coord in coords])
                 f.write(coords_xyz_line + '\n')
 
@@ -338,8 +359,8 @@ elif'--fl22000' in sys.argv:
             coords_X2000Y2000 = []
             for line in lines:
                 line = line.strip()
-                f_str, l_str = line.split(',')
-                f,l = (float(f_str), float(l_str))
+                f_str, l_str, h_str = line.split(',')
+                f,l,h = (float(f_str), float(l_str), float(h_str))
                 X2000,Y2000 = geo.fl22000(f, l)
                 h = '{:.3f}'.format(h)
                 coords_X2000Y2000.append([X2000,Y2000])
@@ -347,7 +368,7 @@ elif'--fl22000' in sys.argv:
                  
     with open('results_flh22000.txt', 'w') as f:
             f.write('X2000, Y2000 \n')
-            for coords in coords_flh:    
+            for coords in coords_X2000Y2000:    
                 coords_X2000Y2000_line = ','.join([str(coord) for coord in coords])
                 f.write(coords_X2000Y2000_line + '\n')
 
@@ -361,8 +382,8 @@ elif'--fl21992' in sys.argv:
             coords_X1992Y1992 = []
             for line in lines:
                 line = line.strip()
-                f_str, l_str = line.split(',')
-                f,l = (float(f_str), float(l_str))
+                f_str, l_str, h_str = line.split(',')
+                f,l,h = (float(f_str), float(l_str), float(h_str))
                 X1992,Y1992 = geo.fl21992(f, l)
                 h = '{:.3f}'.format(h)
                 coords_X1992Y1992.append([X1992,Y1992])
@@ -370,7 +391,7 @@ elif'--fl21992' in sys.argv:
                  
     with open('results_fl21992.txt', 'w') as f:
             f.write('X1992, Y1992 \n')
-            for coords in coords_fl:    
+            for coords in coords_X1992Y1992:    
                 coords_X1992Y1992_line = ','.join([str(coord) for coord in coords])
                 f.write(coords_X1992Y1992_line + '\n') 
 
@@ -391,8 +412,8 @@ elif'--xyz2neu' in sys.argv:
             f.write('n[m],e[m], u[m] \n')
             for coords in coords_neu:    
                 coords_neu_line = ','.join([str(coord) for coord in coords])
-                f.write(coords_neu_line + '\n') 
-
+                f.write(coords_neu_line + '\n')
+ 
         
 
         
