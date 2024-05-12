@@ -36,27 +36,27 @@ ___________________________________________________________
 __XYZ ==> NEU__
 
 _Transformacja ze współrzędnych ortokartezjańskich do topocentrycznych NEU_ (North, East, Up), 
-w wyniku tej transformacji otrzymujemy tablicę z wartościami NEU, które są podane w metrach. 
+w wyniku tej transformacji otrzymujemy plik z wartościami NEU, które są podane w metrach. 
 
 
 _____________________________________________________________
 
 __BL ==> PL2000__
 
-_Transformacja współrzędnych geodezyjnych na współrzędne w układzie PL2000_, które program zwróci nam w metrach.Program obsługuje tutaj wszytskie trzy elipsoidy.
+_Transformacja współrzędnych geodezyjnych na współrzędne w układzie PL2000_, które program zwróci nam w metrach.Do programu wprowadzamy współrzędne geodezyjne podawane w stopniach dziesiętnych.
 
 
 ____________________________________________________________
 
 __BL ==> PL1992__
 
-_Transformacja_ analogiczna do powyższej, wprowadzając współrzędne geodezyjne (szerokość oraz długość) program zwróci współrzędne w układzie PL1992 podane w metrach. Program obsługuje tutaj wszystkie trzy elipsoidy.
+_Transformacja_ analogiczna do powyższej, wprowadzając współrzędne geodezyjne (szerokość oraz długość) program zwróci współrzędne w układzie PL1992 podane w metrach.
 
 
  
 # WYMAGANIA PROGRAMU
 
-Do poprawnego działania programu należy skorzystać z pythona w wersji 3.6 lub nowszych a także zainstalowaną bibliotekę math, numpy oraz sys. Program został napisany dla systemu operacyjnego Windows, macOS, Linux.
+Do poprawnego działania programu należy skorzystać z pythona w wersji 3.6 lub nowszych a także zainstalowaną bibliotekę math, numpy, sys oraz argparse. Program został napisany dla systemu operacyjnego Windows, macOS, Linux.
 
 # KORZYSTANIE Z PROGRAMU
 
