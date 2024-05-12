@@ -91,22 +91,38 @@ Na początku będziemy potrzebować pliku wejściowego, istotne jest aby dane w 
 
 Nasz przykładowy plik nosi nazwę wsp_inp.txt, a oto zawarte w nim dane:
 
-"Współrzedne geocentryczny ECEF stacji pemanentnej GNSS
+Współrzedne geocentryczny ECEF stacji pemanentnej GNSS
+
 Obserwatorium Astronomiczno-Geodezyjne w Józefosławiu
+
   X[m]         Y[m]        Z[m]
+  
 # -----------------------------------------------------
+
 3664940.500,1409153.590,5009571.170
+
 3664940.510,1409153.580,5009571.167
+
 3664940.520,1409153.570,5009571.167
+
 3664940.530,1409153.560,5009571.168
+
 3664940.520,1409153.590,5009571.170
+
 3664940.514,1409153.584,5009571.166
+
 3664940.525,1409153.575,5009571.166
+
 3664940.533,1409153.564,5009571.169
+
 3664940.515,1409153.590,5009571.170
+
 3664940.514,1409153.584,5009571.169
+
 3664940.515,1409153.595,5009571.169
-3664940.513,1409153.584,5009571.171"
+
+3664940.513,1409153.584,5009571.171
+
    
 Chcemy z podanych współrzędnych (tutaj ortokartezjańskich) przejść do współrzędnych geodezyjnych (f,l,h), skorzystamy z elipsoidy grs80; zatem wpiszemy odpowiednią komendę:
 
@@ -117,31 +133,50 @@ _python kod.py grs80 --xyz2flh wsp_inp.txt_
 Otrzymamy taki plik z nastepującymi danymi:
 
 f, l, h 
+
 52.09727222,21.03153333,141.399
+
 52.09727216,21.03153314,141.400
+
 52.09727212,21.03153296,141.403
+
 52.09727209,21.03153277,141.408
+
 52.09727209,21.03153323,141.410
+
 52.09727212,21.03153318,141.402
+
 52.09727207,21.031533,141.406
+
 52.09727206,21.03153281,141.411
+
 52.09727212,21.03153325,141.407
+
 52.09727214,21.03153318,141.405
+
 52.0972721,21.03153332,141.408
+
 52.09727215,21.03153318,141.406
 
 # UWAGI 
 Aby kod działał prawidłowo należy zadbać o:
 > porządek wpisywania kodu
+
 > podanie wszystkich potrzebnych informacji
+
 > poprawność zapisu komendy
+
 > dbałość o jednostki w kodzie wejściowym oraz o separator danych, kod przyjmuje __tylko__ separator określany znakiem __" ,"__ .
 
 # BŁĘDY I ROZWIĄZYWANIE
 > jeśli program będzie podawał informację "podaj elipsoide", wtedy należy sprawdzić czy wszystkie wymagane informacje są zawarte w komendzie
+
 > jeśli po wpisaniu komendy nie znajdziemy w folderze pliku z rezultatami informacji, należy sprawdzić czy :
+
 > > w komendzie nie występują błędy
+> > 
 > > dane wejściowe mają odpowiedni separator
+> > 
 > > porządek kodu jest poprawny 
 
 
