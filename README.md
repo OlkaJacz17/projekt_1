@@ -75,7 +75,7 @@ do poprawnego zadziałania programu potrzebujemy sklonować to repozytorium na s
 2. Program poprosi nas o podanie nazwy elipsoidy, zatem wybieramy jedną z trzech dostępnych < __wgs84_,  __GRS80_, __elipsoidę Krasowskiego_ > wpisując odpowiednio < __wgs84__, __grs80__, __krasowskiego__ >
 3. Następnie wprowadzamy nazwę transformacji jaką chcemy wykonać (musimy to zrobić przy pomocy flagi), więc należy wpisać jedną z podanych :
    
-   " --xyz2flh"
+   " --xyz2flh" aby wykonać tą transformację plik wejściowy koniecznie musi miec 3linijkowy nagłowek, inaczej program "utnie" nam 3 współrzędne
    
    "--flh2xyz"
    
