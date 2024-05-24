@@ -79,11 +79,11 @@ do poprawnego zadziałania programu potrzebujemy sklonować to repozytorium na s
    
    "--flh2xyz"
    
-   "--fl22000"
+   "--fl22000" dla tej transformacji nie należy podawać elipsoidy Krasowkiego, ponieważ program zwróci nam niepoprawne wyniki
    
-   "--fl21992"
+   "--fl21992" dla tej transformacji nie należy podawać elipsoidy Krasowkiego, ponieważ program zwróci nam niepoprawne wyniki
    
-   "--xyz2neu" po wpisaniu tej transformacji musimy podać wartości współrzędnych (x_0, y_0, z_0) punktu odniesienia
+   "--xyz2neu" po wpisaniu tej transformacji musimy podać wartości współrzędnych (x_0, y_0, z_0) punktu odniesienia, współrzędne oddzielamy spacją np (1.1 1.2 1.1)
 4. Ostatnim elementem naszej komendy jest podanie nazwy pliku z danymi wejściowymi
 
 # PRZYKŁADOWE UŻYCIE 
@@ -157,6 +157,18 @@ f, l, h
 52.0972721,21.03153332,141.408
 
 52.09727215,21.03153318,141.406
+
+# PRZYKŁADOWE WYWOŁANIA 
+_transformacja ze współrzędnych ortokartezjańskich do geodezyjnych przy uzyciu przykładowego pliku tekstowego_
+>" python kod.py grs80 --xyz2flh wsp_inp.txt "
+_transformacja ze współrzędnych ortokartezjańskich do NEU_
+>"python kod.py grs80 --xyz2neu 0.0 0.0 0.0 wsp_inp.txt"
+_transformacja ze współrzędnych geodezyjnych do układu PL2000 przy użyciu przykładowego pliku tekstowego_
+>"python kod.py grs80 --fl22000 results_xyz2flh.txt"
+_transformacja analogiczna do powyższej do układu PL1992_
+>"python kod.py grs80 --fl21992 results_xyz2flh.txt"
+_transformacja współrzędnych geodezyjnych do ortokartezjańskich_
+>"python kod.py grs80 --flh2xyz results_xyz2flh.txt"
 
 # UWAGI 
 Aby kod działał prawidłowo należy zadbać o:
