@@ -161,12 +161,16 @@ f, l, h
 # PRZYKŁADOWE WYWOŁANIA 
 _transformacja ze współrzędnych ortokartezjańskich do geodezyjnych przy uzyciu przykładowego pliku tekstowego_
 >" python kod.py grs80 --xyz2flh wsp_inp.txt "
+
 _transformacja ze współrzędnych ortokartezjańskich do NEU_
 >"python kod.py grs80 --xyz2neu 0.0 0.0 0.0 wsp_inp.txt"
+
 _transformacja ze współrzędnych geodezyjnych do układu PL2000 przy użyciu przykładowego pliku tekstowego_
 >"python kod.py grs80 --fl22000 results_xyz2flh.txt"
+
 _transformacja analogiczna do powyższej do układu PL1992_
 >"python kod.py grs80 --fl21992 results_xyz2flh.txt"
+
 _transformacja współrzędnych geodezyjnych do ortokartezjańskich_
 >"python kod.py grs80 --flh2xyz results_xyz2flh.txt"
 
